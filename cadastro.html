@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Aluno - SENAI</title>
+    <link rel="stylesheet" href="style.css?v=3">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <main class="screen login-screen">
+
+            <!-- PARTE SUPERIOR -->
+            <div class="top-section">
+                <img
+                    src="senai-logo.png"
+                    alt="Logo SENAI"
+                    class="senai-logo"
+                >
+                <h2>Cadastro de Aluno</h2>
+                <p>
+                    Cadastre-se para utilizar a cantina.
+                </p>
+            </div>
+
+            <!-- PARTE INFERIOR -->
+            <div class="bottom-section">
+
+                <div class="admin-form">
+                    <!-- NOME -->
+                    <input
+                        type="text"
+                        id="aluno-nome"
+                        placeholder="Nome completo"
+                        autocomplete="name"
+                    >
+
+                    <!-- ESCOLA -->
+                    <input
+                        type="text"
+                        id="aluno-escola"
+                        placeholder="Escola"
+                    >
+
+                    <!-- TURMA -->
+                    <input
+                        type="text"
+                        id="aluno-turma"
+                        placeholder="Turma"
+                    >
+
+                    <!-- E-MAIL -->
+                    <input
+                        type="email"
+                        id="aluno-email"
+                        placeholder="E-mail"
+                        autocomplete="email"
+                    >
+
+                    <!-- BOTÃO CADASTRAR -->
+                    <button
+                        type="button"
+                        class="btn-entrar-adm"
+                        id="btn-cadastrar-aluno"
+                    >
+                        CADASTRAR
+                    </button>
+                </div>
+
+                <!-- VOLTAR PARA LOGIN -->
+                <div class="footer-btn">
+                    <button
+                        type="button"
+                        class="btn-voltar"
+                        onclick="window.location.href='index.html'"
+                    >
+                        VOLTAR PARA LOGIN
+                    </button>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- SCRIPT PRINCIPAL -->
+    <script src="script.js?v=3"></script>
+
+</body>
+
+</html>

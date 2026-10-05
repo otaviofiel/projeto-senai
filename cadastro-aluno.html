@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - SENAI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <main class="screen login-screen">
+
+        <div class="top-section">
+            <img src="senai-logo.png" alt="Logo SENAI" class="senai-logo">
+
+            <h2>Cadastro do Aluno</h2>
+
+            <p>Cadastre-se para utilizar a cantina.</p>
+        </div>
+
+        <div class="bottom-section">
+
+            <div class="admin-form">
+
+                <input
+                    type="text"
+                    id="aluno-nome"
+                    placeholder="Nome completo"
+                >
+
+                <input
+                    type="text"
+                    id="aluno-escola"
+                    placeholder="Escola"
+                >
+
+                <input
+                    type="text"
+                    id="aluno-turma"
+                    placeholder="Turma"
+                >
+
+                <input
+                    type="email"
+                    id="aluno-email"
+                    placeholder="E-mail"
+                >
+
+                <button
+                    type="button"
+                    class="btn-entrar-adm"
+                    id="btn-cadastrar-aluno"
+                >
+                    CADASTRAR
+                </button>
+
+            </div>
+
+            <div class="footer-btn">
+
+                <button
+                    type="button"
+                    class="btn-voltar"
+                    onclick="window.location.href='index.html'"
+                >
+                    VOLTAR PARA LOGIN
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

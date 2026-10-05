@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Acesso Restrito - SENAI</title>
+
+    <link rel="stylesheet" href="style.css?v=3">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <main class="screen login-screen">
+
+            <!-- PARTE SUPERIOR -->
+            <div class="top-section">
+
+                <img
+                    src="senai-logo.png"
+                    alt="Logo SENAI"
+                    class="senai-logo"
+                >
+
+                <p>
+                    Acesso restrito a funcionários.
+                </p>
+
+            </div>
+
+
+            <!-- PARTE INFERIOR -->
+            <div class="bottom-section">
+
+                <div class="admin-form">
+
+                    <!-- USUÁRIO -->
+                    <input
+                        type="text"
+                        id="adm-user"
+                        placeholder="Usuário"
+                        autocomplete="username"
+                    >
+
+
+                    <!-- SENHA -->
+                    <input
+                        type="password"
+                        id="adm-pass"
+                        placeholder="Senha"
+                        autocomplete="current-password"
+                    >
+
+
+                    <!-- ENTRAR -->
+                    <button
+                        type="button"
+                        class="btn-entrar-adm"
+                        id="btn-login-adm"
+                    >
+                        ENTRAR
+                    </button>
+
+                </div>
+
+
+                <!-- VOLTAR -->
+                <div class="footer-btn">
+
+                    <button
+                        type="button"
+                        class="btn-voltar"
+                        onclick="window.location.href='index.html'"
+                    >
+                        VOLTAR PARA ALUNOS
+                    </button>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- SCRIPT PRINCIPAL -->
+    <script src="script.js?v=3"></script>
+
+</body>
+
+</html>
+

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho - SENAI</title>
+    <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body class="bg-light">
+
+    <div class="app-container menu-container">
+        
+        <header class="top-header header-com-voltar">
+            <button type="button" class="btn-voltar-header" onclick="window.location.href='categorias.html'" title="Voltar para Categorias">
+                &#8592;
+            </button>
+            <img src="senai-logo.png" alt="Logo SENAI" class="header-logo">
+        </header>
+
+        <main class="menu-content cart-content">
+            
+            <div class="cart-top-bar">
+                <button type="button" class="btn-voltar-categorias" onclick="window.location.href='categorias.html'">
+                    &larr; Voltar para Categorias
+                </button>
+            </div>
+
+            <h2 class="cart-title">Carrinho</h2>
+            
+            <div class="cart-items-box">
+                <p style="padding:20px; color:#666; width:100%; text-align:center;">
+                    Carregando itens...
+                </p>
+            </div>
+
+            <div class="cart-summary">
+                <h3>Resumo</h3>
+                <div class="summary-line">
+                    <span>Subtotal:</span>
+                    <span>R$ 0,00</span>
+                </div>
+                <div class="summary-line total-line">
+                    <span>Total do Pedido:</span>
+                    <span>R$ 0,00</span>
+                </div>
+            </div>
+
+            <div class="payment-methods">
+                <h3>Métodos de Pagamento</h3>
+                
+                <div class="payment-option">
+                    <div class="payment-header">
+                        <span class="icon">💳</span>
+                        <strong>Cartão de Crédito/Débito</strong>
+                    </div>
+                    <div class="fake-form">
+                        <input type="text" placeholder="Nome no Cartão" disabled>
+                        <input type="text" placeholder="Número do Cartão" disabled>
+                        <div class="form-row">
+                            <input type="text" placeholder="Validade" disabled>
+                            <input type="text" placeholder="CVV" disabled>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="payment-divider">
+
+                <div class="payment-option">
+                    <div class="payment-header">
+                        <span class="icon">💠</span>
+                        <strong>PIX</strong>
+                    </div>
+                    <div class="pix-area">
+                        <img src="https://api.qrcode-monkey.com/tmp/525a7ba02e726e60e0b69144e060401e.svg?1790621052759" alt="QR Code PIX" width="100px">
+                        <p class="pix-code">Código PIX: 00020126580014br.gov.bcb.pix...</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <button type="button" class="btn-prosseguir" id="btn-finalizar">PROSSEGUIR</button>
+
+    </div>
+
+    <script src="script.js?v=3"></script>
+</body>
+</html>

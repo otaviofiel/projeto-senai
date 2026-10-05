@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Finalizado - SENAI</title>
+    <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body class="bg-light">
+
+    <div class="app-container menu-container">
+        
+        <header class="top-header">
+            <img src="senai-logo.png" alt="Logo SENAI" class="header-logo">
+        </header>
+
+        <main class="menu-content final-content">
+            
+            <h2 class="final-title">Pedido Finalizado</h2>
+            
+            <div class="order-summary-box">
+                <p class="summary-label">Resumo do seu pedido:</p>
+                <div class="summary-items-icons" id="lista-icones-final">
+                    </div>
+            </div>
+
+            <div class="status-area">
+                <div class="check-icon">✓</div>
+                <h3>Pagamento Aprovado!</h3>
+            </div>
+
+            <div class="ticket-container">
+                <div class="ticket">
+                    <h1 class="ticket-header">TICKET</h1>
+                    <p class="ticket-label">SUA SENHA:</p>
+                    <div class="ticket-number" id="senha-gerada">67</div>
+                    <div class="printer-icon">📠</div>
+                    <p class="ticket-footer">Retire seu pedido no balcão.</p>
+                </div>
+                <div class="ticket-jagged"></div>
+            </div>
+
+        </main>
+
+        <button class="btn-imprimir" id="btn-restart">imprimir e voltar ao início</button>
+
+    </div>
+
+    <script src="script.js?v=3"></script>
+</body>
+</html>

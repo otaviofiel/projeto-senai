@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - SENAI</title>
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body class="bg-light">
+
+    <div class="app-container menu-container">
+        
+        <header class="top-header">
+            <img src="senai-logo.png" alt="Logo SENAI" class="header-logo">
+        </header>
+
+        <nav class="admin-tabs">
+            <button type="button" class="tab-btn active" onclick="alternarAba('pedidos', this)">PEDIDOS DO DIA</button>
+            <button type="button" class="tab-btn" onclick="alternarAba('estoque', this)">ESTOQUE</button>
+            <button type="button" class="tab-btn" onclick="alternarAba('alunos', this)">ALUNOS</button>
+            <button type="button" class="tab-btn" onclick="alternarAba('cores', this)">🎨 CORES & LOGO</button>
+        </nav>
+
+        <main class="menu-content admin-main">
+            
+            <!-- ABA 1: PEDIDOS -->
+            <section id="aba-pedidos" class="tab-content active" style="display: block;">
+                <div class="admin-list" id="lista-pedidos-chegando">
+                    <p style="text-align: center; color: #666; padding-top: 20px;">Carregando pedidos pendentes...</p>
+                </div>
+            </section>
+
+            <!-- ABA 2: ESTOQUE -->
+            <section id="aba-estoque" class="tab-content" style="display: none;">
+                <div class="admin-list" id="lista-estoque">
+                    <p style="text-align: center; color: #666; padding-top: 20px;">Carregando estoque...</p>
+                </div>
+            </section>
+
+            <!-- ABA 3: ALUNOS -->
+            <section id="aba-alunos" class="tab-content" style="display: none;">
+                <div class="admin-list" id="lista-alunos">
+                    <p style="text-align: center; color: #666; padding-top: 20px;">Carregando alunos...</p>
+                </div>
+            </section>
+
+            <!-- ABA 4: CORES & LOGO / IDENTIDADE VISUAL -->
+            <section id="aba-cores" class="tab-content" style="display: none;">
+                <div class="theme-customizer-box">
+                    <h3>🎨 Identidade Visual e Cores do Sistema</h3>
+                    <p class="theme-desc">
+                        Personalize as cores e a logo de todo o sistema. As alterações são aplicadas instantaneamente em todas as telas (Login, Cardápio, Categorias, Carrinho e Painel).
+                    </p>
+
+                    <!-- SEÇÃO DE LOGO -->
+                    <div class="theme-section-title">🖼️ Importar / Alterar Logo do Site</div>
+                    <div class="logo-upload-card">
+                        <div class="logo-preview-wrapper">
+                            <span class="preview-tag">Logo Atual:</span>
+                            <div class="logo-preview-frame">
+                                <img id="preview-logo-painel" src="senai-logo.png" alt="Logo do Site">
+                            </div>
+                        </div>
+                        <div class="logo-upload-controls">
+                            <p class="logo-help-text">
+                                Selecione uma imagem do seu computador ou celular (PNG, JPG, SVG ou WEBP) para substituir a logo em todas as páginas.
+                            </p>
+                            <div class="upload-btn-group">
+                                <label for="input-upload-logo" class="btn-custom-upload">
+                                    📁 Selecionar Nova Imagem
+                                </label>
+                                <input type="file" id="input-upload-logo" accept="image/*" onchange="manipularUploadLogo(event)" style="display: none;">
+                                <button type="button" class="btn-restaurar-logo" onclick="restaurarLogoOriginal()">Restaurar Logo Original (SENAI)</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SEÇÃO DE CORES -->
+                    <div class="theme-section-title">Paletas de Cores Pré-definidas</div>
+                    <div class="color-palette-grid">
+                        <button type="button" class="color-swatch-btn" onclick="selecionarTemaCor('#E30613', this)">
+                            <span class="swatch-circle" style="background-color: #E30613;"></span>
+                            <span class="swatch-name">Vermelho SENAI (Padrão)</span>
+                        </button>
+
+                        <button type="button" class="color-swatch-btn" onclick="selecionarTemaCor('#005696', this)">
+                            <span class="swatch-circle" style="background-color: #005696;"></span>
+                            <span class="swatch-name">Azul Corporativo</span>
+                        </button>
+
+                        <button type="button" class="color-swatch-btn" onclick="selecionarTemaCor('#198754', this)">
+                            <span class="swatch-circle" style="background-color: #198754;"></span>
+                            <span class="swatch-name">Verde Cantina</span>
+                        </button>
+
+                        <button type="button" class="color-swatch-btn" onclick="selecionarTemaCor('#6f42c1', this)">
+                            <span class="swatch-circle" style="background-color: #6f42c1;"></span>
+                            <span class="swatch-name">Roxo Moderno</span>
+                        </button>
+
+                        <button type="button" class="color-swatch-btn" onclick="selecionarTemaCor('#e65100', this)">
+                            <span class="swatch-circle" style="background-color: #e65100;"></span>
+                            <span class="swatch-name">Laranja Food</span>
+                        </button>
+
+                        <button type="button" class="color-swatch-btn" onclick="selecionarTemaCor('#0891b2', this)">
+                            <span class="swatch-circle" style="background-color: #0891b2;"></span>
+                            <span class="swatch-name">Azul Turquesa</span>
+                        </button>
+
+                        <button type="button" class="color-swatch-btn" onclick="selecionarTemaCor('#212529', this)">
+                            <span class="swatch-circle" style="background-color: #212529;"></span>
+                            <span class="swatch-name">Grafite Dark</span>
+                        </button>
+
+                        <button type="button" class="color-swatch-btn" onclick="selecionarTemaCor('#d39e00', this)">
+                            <span class="swatch-circle" style="background-color: #d39e00;"></span>
+                            <span class="swatch-name">Amarelo Mostarda</span>
+                        </button>
+                    </div>
+
+                    <div class="theme-section-title">Seletor de Cor Livre</div>
+                    <div class="custom-color-picker-row">
+                        <label for="input-cor-personalizada">Escolher cor:</label>
+                        <input type="color" id="input-cor-personalizada" value="#E30613" oninput="selecionarTemaCor(this.value)">
+                        <span id="hex-code-label">#E30613</span>
+                        <button type="button" class="btn-restaurar-cor" onclick="selecionarTemaCor('#E30613')">Restaurar Vermelho Padrão</button>
+                    </div>
+
+                    <div class="theme-preview-box">
+                        <h4>Demonstração Visual:</h4>
+                        <div class="preview-elements">
+                            <div class="preview-banner">Exemplo de Cabeçalho</div>
+                            <button type="button" class="preview-btn">Botão Principal</button>
+                            <button type="button" class="preview-outline-btn">Botão de Borda</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <button type="button" class="btn-logout" onclick="fazerLogoutAdm()">SAIR / LOGOUT</button>
+
+    </div>
+
+    <script src="script.js?v=4"></script>
+</body>
+</html>
