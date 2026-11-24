@@ -1,51 +1,154 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedido Finalizado - SENAI</title>
-    <link rel="stylesheet" href="style.css?v=3">
+    <title>Pedido Finalizado • Cantina SENAI FilaZero</title>
+    <link rel="stylesheet" href="style.css?v=7">
 </head>
-<body class="bg-light">
 
-    <div class="app-container menu-container">
-        
-        <header class="top-header">
-            <img src="senai-logo.png" alt="Logo SENAI" class="header-logo">
+<body class="bg-light final-page-body">
+
+    <div class="app-container menu-container final-screen-container">
+
+        <!-- CABEÇALHO COM BOTÃO INÍCIO E LOGO -->
+        <header class="top-header header-com-voltar no-print">
+            <button type="button" class="btn-voltar-header" onclick="window.location.href='index.html'"
+                title="Voltar ao Início / Dashboard">
+                🏠
+            </button>
+            <img src="senai-logo.png" alt="Logo SENAI" class="header-logo senai-logo"
+                onclick="window.location.href='index.html'" style="cursor: pointer;" title="Ir para o Dashboard">
+            <button type="button" class="btn-voltar-header" onclick="window.location.href='menu.html'"
+                style="left: auto; right: 20px;" title="Fazer novo pedido no cardápio">
+                🍽️
+            </button>
         </header>
 
+        <!-- CONTEÚDO PRINCIPAL DO PEDIDO FINALIZADO -->
         <main class="menu-content final-content">
-            
-            <h2 class="final-title">Pedido Finalizado</h2>
-            
-            <div class="order-summary-box">
-                <p class="summary-label">Resumo do seu pedido:</p>
-                <div class="summary-items-icons" id="lista-icones-final">
-                    </div>
-            </div>
 
+            <!-- BADGE SUPERIOR DE STATUS DE SUCESSO -->
             <div class="status-area">
-                <div class="check-icon">✓</div>
-                <h3>Pagamento Aprovado!</h3>
+                <div class="check-icon-animated">
+                    <span>✓</span>
+                </div>
+                <h3 id="status-pagamento-texto">Pagamento Aprovado com Sucesso!</h3>
+                <p style="font-size: 14px; color: #64748b; margin-top: 4px;">
+                    Seu pedido já foi enviado para a cozinha da cantina.
+                </p>
             </div>
 
-            <div class="ticket-container">
+            <!-- TICKET DIGITAL MODERNO COM SERRILHADO -->
+            <div class="ticket-container printable-ticket" id="ticket-area-print">
                 <div class="ticket">
-                    <h1 class="ticket-header">TICKET</h1>
-                    <p class="ticket-label">SUA SENHA:</p>
-                    <div class="ticket-number" id="senha-gerada">67</div>
-                    <div class="printer-icon">📠</div>
-                    <p class="ticket-footer">Retire seu pedido no balcão.</p>
+
+                    <!-- Header do Ticket -->
+                    <div class="ticket-brand-header">
+                        <img src="senai-logo.png" alt="Logo SENAI" class="ticket-mini-logo">
+                        <span class="ticket-brand-subtitle">CANTINA FILAZERO</span>
+                    </div>
+
+                    <div class="ticket-divider-dashed"></div>
+
+                    <!-- SENHA DE ATENDIMENTO -->
+                    <p class="ticket-label">SUA SENHA DE RETIRADA</p>
+                    <div class="ticket-number-box">
+                        <span class="ticket-number" id="senha-gerada">--</span>
+                    </div>
+
+                    <!-- Informações do Pedido -->
+                    <div class="ticket-meta-info">
+                        <div class="ticket-meta-line">
+                            <span>Status:</span>
+                            <strong style="color: #10b981;">● Preparando</strong>
+                        </div>
+                        <div class="ticket-meta-line">
+                            <span>Horário:</span>
+                            <strong id="ticket-hora-pedido">Agora</strong>
+                        </div>
+                        <div class="ticket-meta-line">
+                            <span>Pagamento:</span>
+                            <strong id="ticket-metodo-pagamento">💠 PIX Instantâneo</strong>
+                        </div>
+                    </div>
+
+                    <div class="ticket-divider-dashed"></div>
+
+                    <!-- Lista de Itens do Pedido no Ticket -->
+                    <div class="ticket-items-section">
+                        <div class="ticket-items-header">
+                            <span>Qtd / Item</span>
+                            <span>Total</span>
+                        </div>
+                        <div class="ticket-items-list" id="ticket-lista-itens">
+                            <div class="ticket-item-row">
+                                <div class="ticket-item-info">
+                                    <span class="ticket-item-qtd">1x</span>
+                                    <span class="ticket-item-nome">Lanche Cantina SENAI</span>
+                                </div>
+                                <span class="ticket-item-preco">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ticket-divider-dashed"></div>
+
+                    <!-- Total do Pedido -->
+                    <div class="ticket-total-line">
+                        <span>VALOR TOTAL:</span>
+                        <strong class="ticket-total-val" id="ticket-total-pedido">R$ 0,00</strong>
+                    </div>
+
+                    <!-- Código de Barras Decorativo / Senha Digital -->
+                    <div class="ticket-barcode-box">
+                        <div class="ticket-barcode-lines"></div>
+                        <span class="ticket-barcode-num">FILAZERO-AUTENTICADO</span>
+                    </div>
+
+                    <p class="ticket-footer-text">
+                        📢 Fique atento ao painel da cantina ou ao chamado da sua senha!
+                    </p>
+
                 </div>
+
+                <!-- Efeito serrilhado no rodapé do papel -->
                 <div class="ticket-jagged"></div>
+            </div>
+
+            <!-- Resumo Rápido com Miniaturas dos Itens -->
+            <div class="order-summary-box no-print" style="margin-top: 25px;">
+                <p class="summary-label">Itens que você vai saborear:</p>
+                <div class="summary-items-icons" id="lista-icones-final"></div>
+            </div>
+
+            <!-- Dica Informativa -->
+            <div class="ticket-info-banner no-print">
+                <span style="font-size: 20px;">💡</span>
+                <div>
+                    <strong>Dica de Ouro:</strong>
+                    Tire um print desta tela ou clique em <strong>Imprimir / Salvar PDF</strong> para apresentar no balcão caso necessário.
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="final-actions-group no-print">
+                <button type="button" class="btn-ticket-action btn-ticket-print" id="btn-imprimir-ticket">
+                    🖨️ Imprimir Ticket / Salvar PDF
+                </button>
+                <button type="button" class="btn-ticket-action btn-ticket-home" id="btn-restart">
+                    🏠 Voltar ao Início / Fazer Novo Pedido
+                </button>
             </div>
 
         </main>
 
-        <button class="btn-imprimir" id="btn-restart">imprimir e voltar ao início</button>
-
     </div>
 
-    <script src="script.js?v=3"></script>
+    <!-- SCRIPT PRINCIPAL DO SISTEMA -->
+    <script src="script.js?v=7"></script>
+
 </body>
+
 </html>

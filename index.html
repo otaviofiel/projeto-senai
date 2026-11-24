@@ -4,78 +4,755 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autoatendimento SENAI</title>
-    <link rel="stylesheet" href="style.css?v=4">
+    <title>Dashboard Cantina SENAI • FilaZero</title>
+    <!-- CSS Principal do Sistema -->
+    <link rel="stylesheet" href="style.css?v=6">
 </head>
 
-<body>
+<body class="dashboard-page">
 
-    <div class="app-container">
+    <!-- BARRA DE NAVEGAÇÃO SUPERIOR -->
+    <header class="dash-navbar">
+        <div class="dash-nav-container">
+            <a href="index.html" class="dash-nav-brand">
+                <img src="senai-logo.png" alt="Logo SENAI" class="header-logo senai-logo">
+                <span class="dash-brand-tag">
+                    <span class="pulse-dot"></span> Cantina Digital
+                </span>
+            </a>
 
-        <main class="screen login-screen">
+            <!-- Links de Seções -->
+            <nav class="dash-nav-links">
+                <a href="#inicio" class="dash-nav-link active">Início</a>
+                <a href="#escola" class="dash-nav-link">Nossa Escola</a>
+                <a href="#equipe" class="dash-nav-link">Equipe da Cantina</a>
+                <a href="#produtos" class="dash-nav-link">Fotos & Cardápio</a>
+                <a href="#como-funciona" class="dash-nav-link">Como Funciona</a>
+            </nav>
 
-            <!-- PARTE SUPERIOR -->
-            <div class="top-section">
-                <img
-                    src="senai-logo.png"
-                    alt="Logo SENAI"
-                    class="senai-logo"
-                >
-                <p>
-                    Entre com seu e-mail para acessar a cantina.
+            <!-- Ações Rápidas -->
+            <div class="dash-nav-actions">
+                <a href="menu.html" class="btn-dash-outline">
+                    🍽️ Ver Cardápio
+                </a>
+                
+                <a href="loginADM.html" class="btn-dash-outline" style="border-style: dashed;"
+                    title="Acesso Administrativo da Cantina">
+                    🔒 Área Cantina
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- SEÇÃO HERO INOVADORA -->
+    <section class="dash-hero" id="inicio">
+        <div class="dash-hero-container">
+            <div class="dash-hero-text">
+                <div class="dash-hero-badge">
+                    <span class="pulse-dot"></span>
+                    <span id="live-status-hero">CANTINA ABERTA • ATENDIMENTO AO VIVO</span>
+                </div>
+                <h1 class="dash-hero-title">
+                    Dashboard Cantina SENAI
+                </h1>
+                <p class="dash-hero-desc">
+                    Mais sabor, nutrição de qualidade e <strong>zero filas</strong> para você aproveitar 100% do seu
+                    intervalo. Faça seu pedido pelo computador ou celular e retire quentinho no balcão.
+                </p>
+                <div class="dash-hero-cta-group">
+                    <a href="menu.html" class="btn-hero-white">
+                        🍔 Fazer Pedido Agora
+                    </a>
+                    <a href="#produtos" class="btn-hero-glass">
+                        📸 Conhecer Produtos
+                    </a>
+                    <a href="cadastro.html" class="btn-hero-glass">
+                        📝 Criar Cadastro
+                    </a>
+                </div>
+            </div>
+
+            <!-- CARD DE ACESSO RÁPIDO DO ALUNO -->
+            <div class="dash-quick-card">
+                <h3>⚡ Acesso Rápido do Aluno</h3>
+                <p>Digite seu e-mail cadastrado para entrar instantaneamente no sistema de autoatendimento:</p>
+
+                <div class="dash-quick-form">
+                    <div class="dash-quick-input-group">
+                        <span class="input-icon">✉️</span>
+                        <input type="email" id="aluno-login-email" placeholder="seu.email@aluno.senai.br"
+                            autocomplete="email">
+                    </div>
+                    <button type="button" id="btn-login-aluno" class="btn-dash-primary"
+                        style="width: 100%; justify-content: center; padding: 14px; font-size: 15px;">
+                        ENTRAR NO SISTEMA
+                    </button>
+                    <button type="button" class="btn-dash-outline" onclick="window.location.href='cadastro.html'"
+                        style="width: 100%; justify-content: center;">
+                        Ainda não tenho cadastro
+                    </button>
+                </div>
+
+                <div class="dash-quick-badges">
+                    <div class="dash-quick-badge-item">🔒 100% Seguro</div>
+                    <div class="dash-quick-badge-item">⚡ Senha Digital</div>
+                    <div class="dash-quick-badge-item">💳 PIX & Cartão</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTEÚDO PRINCIPAL DO DASHBOARD -->
+    <main class="dash-content">
+
+        <!-- 1. KPIS E MÉTRICAS DO SISTEMA -->
+        <section class="dash-kpis-grid">
+            <div class="dash-kpi-card">
+                <div class="dash-kpi-icon">🎓</div>
+                <div class="dash-kpi-info">
+                    <h4>+1.200</h4>
+                    <p>Alunos Atendidos Diariamente</p>
+                </div>
+            </div>
+
+            <div class="dash-kpi-card">
+                <div class="dash-kpi-icon">⚡</div>
+                <div class="dash-kpi-info">
+                    <h4>0 Filas</h4>
+                    <p>Tecnologia FilaZero no Recreio</p>
+                </div>
+            </div>
+
+            <div class="dash-kpi-card">
+                <div class="dash-kpi-icon">⏱️</div>
+                <div class="dash-kpi-info">
+                    <h4>&lt; 2 min</h4>
+                    <p>Tempo Médio de Retirada</p>
+                </div>
+            </div>
+
+            <div class="dash-kpi-card">
+                <div class="dash-kpi-icon">🥪</div>
+                <div class="dash-kpi-info">
+                    <h4>+50 Itens</h4>
+                    <p>Cardápio Fresco & Nutritivo</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SEÇÃO: NOSSA ESCOLA SENAI -->
+        <section class="dash-section" id="escola">
+            <div class="dash-section-header">
+                <span class="dash-section-badge">🏫 Formação & Tecnologia</span>
+                <h2 class="dash-section-title">Nossa Escola SENAI</h2>
+                <p class="dash-section-subtitle">
+                    Preparando profissionais de excelência para a indústria brasileira, integrando tecnologia, inovação
+                    e bem-estar em todos os momentos do seu dia escolar.
                 </p>
             </div>
 
-            <!-- PARTE INFERIOR -->
-            <div class="bottom-section">
+            <div class="dash-school-grid">
+                <!-- Card de Apresentação da Escola -->
+                <div class="dash-school-card">
+                    <div>
+                        <h3>⚙️ Tradição em Inovação & Futuro</h3>
+                        <p>
+                            O Serviço Nacional de Aprendizagem Industrial (SENAI) é pioneiro na formação técnica,
+                            prática e humana. Para nós, cada minuto do estudante é valioso.
+                        </p>
+                        <p>
+                            O projeto <strong>FilaZero Cantina</strong> foi criado no campus para modernizar a rotina
+                            alimentar dos alunos, evitando o estresse e o cansaço das filas durante o intervalo. Assim,
+                            você aproveita o recreio para descansar, socializar com os colegas e recarregar as energias
+                            com alimentos nutritivos e saborosos.
+                        </p>
 
-                <div class="admin-form">
-                    <!-- E-MAIL DO ALUNO -->
-                    <input
-                        type="email"
-                        id="aluno-login-email"
-                        placeholder="Digite seu e-mail"
-                        autocomplete="email"
-                    >
+                        <ul class="dash-features-list">
+                            <li>
+                                <span class="check-icon">✓</span>
+                                Laboratórios modernos e estrutura de padrão internacional.
+                            </li>
+                            <li>
+                                <span class="check-icon">✓</span>
+                                Cantina certificada com rígidos protocolos de higiene sanitária e ANVISA.
+                            </li>
+                            <li>
+                                <span class="check-icon">✓</span>
+                                Autoatendimento digital integrado via celular, computadores e totens.
+                            </li>
+                            <li>
+                                <span class="check-icon">✓</span>
+                                Opções balanceadas para manter o foco e o alto rendimento nos estudos.
+                            </li>
+                        </ul>
+                    </div>
 
-                    <!-- BOTÃO ENTRAR -->
-                    <button
-                        type="button"
-                        id="btn-login-aluno"
-                        class="btn-entrar-adm"
-                    >
-                        ENTRAR
-                    </button>
-
-                    <!-- BOTÃO CRIAR CADASTRO -->
-                    <button
-                        type="button"
-                        class="btn-cadastro"
-                        onclick="window.location.href='cadastro.html'"
-                    >
-                        CRIAR CADASTRO
-                    </button>
+                    <!-- Simulador de Economia de Tempo -->
+                    <div class="dash-savings-box">
+                        <p style="margin-bottom: 6px; font-size: 14px; color: #334155;">
+                            💡 <strong>Economia de Tempo FilaZero:</strong>
+                        </p>
+                        <p style="font-size: 14px; color: #475569; margin: 0;">
+                            Ao pedir pelo sistema, você economiza cerca de <strong>15 minutos por intervalo</strong>,
+                            somando mais de <strong>5 horas livres por mês</strong> para descansar!
+                        </p>
+                    </div>
                 </div>
 
-                <!-- ACESSO DO ADMINISTRADOR -->
-                <div class="footer-btn">
-                    <button
-                        type="button"
-                        class="btn-voltar"
-                        onclick="window.location.href='loginADM.html'"
-                    >
-                        ACESSO DA CANTINA
-                    </button>
+                <!-- Painel dos Horários de Intervalo da Escola -->
+                <div class="dash-intervals-card">
+                    <h3>
+                        <span>⏰ Horários dos Intervalos</span>
+                        <span class="live-clock-badge" id="dash-live-clock">--:--:--</span>
+                    </h3>
+
+                    <!-- Turno Manhã -->
+                    <div class="dash-interval-item" id="intervalo-manha">
+                        <div class="dash-interval-left">
+                            <span class="dash-interval-icon">🌅</span>
+                            <div class="dash-interval-info">
+                                <h5>Turno Manhã</h5>
+                                <span>09:00 às 10:00 • Salgados assados, pães de queijo e sucos</span>
+                            </div>
+                        </div>
+                        <span class="dash-interval-tag" id="tag-manha">Manhã</span>
+                    </div>
+
+                    <!-- Turno Tarde -->
+                    <div class="dash-interval-item" id="intervalo-tarde">
+                        <div class="dash-interval-left">
+                            <span class="dash-interval-icon">☀️</span>
+                            <div class="dash-interval-info">
+                                <h5>Turno Tarde</h5>
+                                <span>15:00 às 16:00 • Lanches naturais, frutas, café e salgados</span>
+                            </div>
+                        </div>
+                        <span class="dash-interval-tag" id="tag-tarde">Tarde</span>
+                    </div>
+
+                    <!-- Turno Noite -->
+                    <div class="dash-interval-item" id="intervalo-noite">
+                        <div class="dash-interval-left">
+                            <span class="dash-interval-icon">🌙</span>
+                            <div class="dash-interval-info">
+                                <h5>Turno Noite</h5>
+                                <span>20:40 às 21:00 • Hambúrgueres artesanais, salgados e bebidas</span>
+                            </div>
+                        </div>
+                        <span class="dash-interval-tag" id="tag-noite">Noite</span>
+                    </div>
+
+                    <div
+                        style="background: #f8fafc; border-radius: 12px; padding: 14px; margin-top: 20px; font-size: 13px; color: #64748b; line-height: 1.5; border-left: 4px solid var(--cor-primaria);">
+                        ℹ️ <strong>Dica Pro:</strong> Realize seu pedido 10 minutos antes do sinal tocar. Quando o
+                        intervalo começar, sua senha já estará pronta para retirada no balcão da cantina!
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. SEÇÃO: FUNCIONÁRIOS DA CANTINA -->
+        <section class="dash-section" id="equipe">
+            <div class="dash-section-header">
+                <span class="dash-section-badge">👨‍🍳 Equipe de Excelência</span>
+                <h2 class="dash-section-title">Nossa Equipe da Cantina</h2>
+                <p class="dash-section-subtitle">
+                    Conheça os profissionais dedicados que preparam cada receita com carinho, higiene e máxima atenção
+                    ao seu intervalo todos os dias.
+                </p>
+            </div>
+
+            <div class="dash-staff-grid">
+                <!-- Funcionário 1 -->
+                <div class="dash-staff-card">
+                    <div class="dash-staff-img-wrapper">
+                        <img src="https://mail.google.com/mail/u/0/?ui=2&ik=3472479ff6&attid=0.1&permmsgid=msg-f:1882131052329239505&th=1a1eac385ad103d1&view=fimg&fur=ip&permmsgid=msg-f:1882131052329239505&sz=s0-l75-ft&attbid=ANGjdJ98nd1XgeLy0803ZOpVOOroe2xg14USobcxsgM8wDPKLasQP2dPUG4nKztvzKbitWmi66vm79TCzx-1uMXNDG-1wPbSBl1es2OYXVRI-WpW7xYDABtsR1-vg78&disp=emb&realattid=ii_1a1eac343f27ab3e06f1&zw"
+                            alt="Tainá Santos - Atendendente" class="dash-staff-img"
+                            onerror="this.src='https://mail.google.com/mail/u/0/?ui=2&ik=3472479ff6&attid=0.1&permmsgid=msg-f:1882131052329239505&th=1a1eac385ad103d1&view=fimg&fur=ip&permmsgid=msg-f:1882131052329239505&sz=s0-l75-ft&attbid=ANGjdJ98nd1XgeLy0803ZOpVOOroe2xg14USobcxsgM8wDPKLasQP2dPUG4nKztvzKbitWmi66vm79TCzx-1uMXNDG-1wPbSBl1es2OYXVRI-WpW7xYDABtsR1-vg78&disp=emb&realattid=ii_1a1eac343f27ab3e06f1&zw'">
+                        <span class="dash-staff-badge">🥇 12 anos de SENAI</span>
+                    </div>
+                    <div class="dash-staff-body">
+                        <div>
+                            <h4>Tainá Santos</h4>
+                            <p class="dash-staff-role">Atendente da Cantina</p>
+                        </div>
+                        <div class="dash-staff-footer">
+                            <span>Salgados & Saudáveis</span>
+                            <span class="rating-stars">★★★★★ 4.9</span>
+                        </div>
+                    </div>
+                </div>
+
+               
+        </section>
+
+        <!-- 4. SEÇÃO: VITRINE GASTRONÔMICA & FOTOS DE PRODUTOS -->
+        <section class="dash-section" id="produtos">
+            <div class="dash-section-header">
+                <span class="dash-section-badge">🥪 Cardápio do Dia</span>
+                <h2 class="dash-section-title">Fotos e Destaques Gastronômicos</h2>
+                <p class="dash-section-subtitle">
+                    Confira algumas das delícias preparadas diariamente na nossa cantina. Clique na foto para ver em
+                    alta definição ou peça diretamente!
+                </p>
+            </div>
+
+            <!-- Filtros Interativos de Categoria -->
+            <div class="dash-products-filter">
+                <button type="button" class="dash-filter-btn active" onclick="filtrarProdutosDash('todos', this)">
+                    ✨ Todos os Produtos
+                </button>
+                <button type="button" class="dash-filter-btn" onclick="filtrarProdutosDash('salgados', this)">
+                    🥟 Salgados Artesanais
+                </button>
+                <button type="button" class="dash-filter-btn" onclick="filtrarProdutosDash('lanches', this)">
+                    🍔 Lanches & Sanduíches
+                </button>
+                <button type="button" class="dash-filter-btn" onclick="filtrarProdutosDash('doces', this)">
+                    🍰 Sobremesas & Doces
+                </button>
+                <button type="button" class="dash-filter-btn" onclick="filtrarProdutosDash('bebidas', this)">
+                    🥤 Bebidas Geladas
+                </button>
+            </div>
+
+            <!-- Grid de Produtos com Fotos Reais -->
+            <div class="dash-products-grid" id="dash-products-container">
+
+                <!-- Produto 1: Coxinha de Frango -->
+                <div class="dash-prod-card" data-cat="salgados">
+                    <div class="dash-prod-img-box"
+                        onclick="abrirModalProduto('Coxinha de Frango com Catupiry', 'R$ 6,50', 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=800&auto=format&fit=crop&q=80', 'Massa artesanal dourada e crocante, recheio generoso de peito de frango desfiado temperado com ervas finas e catupiry cremoso autêntico.', 'Contém glúten e derivados de leite.')">
+                        <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=600&auto=format&fit=crop&q=80"
+                            alt="Coxinha de Frango com Catupiry" class="dash-prod-img"
+                            onerror="this.src='https://placehold.co/400x300/eeeeee/999999?text=Coxinha+Dourada'">
+                        <span class="dash-prod-tag">Mais Pedido 🔥</span>
+                        <button type="button" class="dash-prod-zoom-btn" title="Ampliar Foto">🔍</button>
+                    </div>
+                    <div class="dash-prod-content">
+                        <div>
+                            <span class="dash-prod-cat">Salgados Fritos</span>
+                            <h4 class="dash-prod-name">Coxinha Dourada com Catupiry</h4>
+                            <p class="dash-prod-desc">
+                                Casquinha super crocante e sequinha, recheio cremoso e muito frango desfiado temperado
+                                no ponto certo.
+                            </p>
+                        </div>
+                        <div class="dash-prod-bottom">
+                            <span class="dash-prod-price">R$ 6,50</span>
+                            <a href="menu.html" class="dash-prod-btn-order">
+                                🛒 Pedir Agora
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 2: Hambúrguer Artesanal SENAI -->
+                <div class="dash-prod-card" data-cat="lanches">
+                    <div class="dash-prod-img-box"
+                        onclick="abrirModalProduto('Hambúrguer Artesanal Especial SENAI', 'R$ 12,00', 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&auto=format&fit=crop&q=80', 'Pão brioche tostado na manteiga, hambúrguer bovino suculento grelhado na hora, queijo prato derretido, alface fresca, tomate e maionese especial da casa.', 'Contém derivados de leite, glúten e ovos.')">
+                        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=80"
+                            alt="Hambúrguer Artesanal Especial SENAI" class="dash-prod-img"
+                            onerror="this.src='https://placehold.co/400x300/eeeeee/999999?text=Hamburguer+SENAI'">
+                        <span class="dash-prod-tag" style="background: #2563eb;">Especial da Casa 🌟</span>
+                        <button type="button" class="dash-prod-zoom-btn" title="Ampliar Foto">🔍</button>
+                    </div>
+                    <div class="dash-prod-content">
+                        <div>
+                            <span class="dash-prod-cat">Lanches Artesanais</span>
+                            <h4 class="dash-prod-name">Hambúrguer Especial SENAI</h4>
+                            <p class="dash-prod-desc">
+                                Blend artesanal de carne bovina grelhada, queijo derretido, alface fresca e molho
+                                especial no pão brioche.
+                            </p>
+                        </div>
+                        <div class="dash-prod-bottom">
+                            <span class="dash-prod-price">R$ 12,00</span>
+                            <a href="menu.html" class="dash-prod-btn-order">
+                                🛒 Pedir Agora
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 3: Enroladinho Assado de Presunto e Queijo -->
+                <div class="dash-prod-card" data-cat="salgados">
+                    <div class="dash-prod-img-box"
+                        onclick="abrirModalProduto('Enroladinho Folhado de Presunto e Queijo', 'R$ 6,00', 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=800&auto=format&fit=crop&q=80', 'Massa folhada levinha e crocante assada ao forno, recheada com fatias de presunto magro e queijo muçarela derretido com orégano.', 'Contém glúten e lactose.')">
+                        <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&auto=format&fit=crop&q=80"
+                            alt="Enroladinho Folhado Assado" class="dash-prod-img"
+                            onerror="this.src='https://placehold.co/400x300/eeeeee/999999?text=Enroladinho+Assado'">
+                        <span class="dash-prod-tag" style="background: #059669;">Assado no Dia 🥐</span>
+                        <button type="button" class="dash-prod-zoom-btn" title="Ampliar Foto">🔍</button>
+                    </div>
+                    <div class="dash-prod-content">
+                        <div>
+                            <span class="dash-prod-cat">Salgados Assados</span>
+                            <h4 class="dash-prod-name">Enroladinho Presunto & Queijo</h4>
+                            <p class="dash-prod-desc">
+                                Massa leve dourada ao forno, recheada com presunto nobre e queijo muçarela com toque
+                                suave de orégano.
+                            </p>
+                        </div>
+                        <div class="dash-prod-bottom">
+                            <span class="dash-prod-price">R$ 6,00</span>
+                            <a href="menu.html" class="dash-prod-btn-order">
+                                🛒 Pedir Agora
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 4: Bolo de Pote Ninho com Morango -->
+                <div class="dash-prod-card" data-cat="doces">
+                    <div class="dash-prod-img-box"
+                        onclick="abrirModalProduto('Bolo de Pote Ninho com Morango', 'R$ 8,00', 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&auto=format&fit=crop&q=80', 'Camadas generosas de bolo fofinho umedecido com calda especial, brigadeiro cremoso de Leite Ninho e pedaços de morangos frescos selecionados.', 'Contém leite, derivados e glúten.')">
+                        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&auto=format&fit=crop&q=80"
+                            alt="Bolo de Pote Ninho com Morango" class="dash-prod-img"
+                            onerror="this.src='https://placehold.co/400x300/eeeeee/999999?text=Bolo+de+Pote'">
+                        <span class="dash-prod-tag" style="background: #db2777;">Favorito dos Alunos 🍓</span>
+                        <button type="button" class="dash-prod-zoom-btn" title="Ampliar Foto">🔍</button>
+                    </div>
+                    <div class="dash-prod-content">
+                        <div>
+                            <span class="dash-prod-cat">Sobremesas Gourmet</span>
+                            <h4 class="dash-prod-name">Bolo de Pote Ninho & Morango</h4>
+                            <p class="dash-prod-desc">
+                                Pão de ló macio e molhadinho com camadas de brigadeiro de Leite Ninho e morangos
+                                naturais frescos.
+                            </p>
+                        </div>
+                        <div class="dash-prod-bottom">
+                            <span class="dash-prod-price">R$ 8,00</span>
+                            <a href="menu.html" class="dash-prod-btn-order">
+                                🛒 Pedir Agora
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 5: Pão de Queijo Tradicional -->
+                <div class="dash-prod-card" data-cat="salgados">
+                    <div class="dash-prod-img-box"
+                        onclick="abrirModalProduto('Pão de Queijo Tradicional Quentinho', 'R$ 4,50', 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&auto=format&fit=crop&q=80', 'Receita mineira tradicional feita com queijo canastra e polvilho artesanal. Crocante por fora e incrivelmente macio por dentro.', 'Sem glúten. Contém derivados de leite e ovos.')">
+                        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80"
+                            alt="Pão de Queijo Mineiro Quentinho" class="dash-prod-img"
+                            onerror="this.src='https://placehold.co/400x300/eeeeee/999999?text=Pao+de+Queijo'">
+                        <span class="dash-prod-tag" style="background: #d97706;">Tradicional Mineiro 🧀</span>
+                        <button type="button" class="dash-prod-zoom-btn" title="Ampliar Foto">🔍</button>
+                    </div>
+                    <div class="dash-prod-content">
+                        <div>
+                            <span class="dash-prod-cat">Salgados Assados</span>
+                            <h4 class="dash-prod-name">Pão de Queijo Quentinho</h4>
+                            <p class="dash-prod-desc">
+                                Feito com queijo canastra legítimo, textura macia e aerada, servido direto da estufa
+                                aquecida.
+                            </p>
+                        </div>
+                        <div class="dash-prod-bottom">
+                            <span class="dash-prod-price">R$ 4,50</span>
+                            <a href="menu.html" class="dash-prod-btn-order">
+                                🛒 Pedir Agora
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 6: Sucos Naturais & Refrigerantes -->
+                <div class="dash-prod-card" data-cat="bebidas">
+                    <div class="dash-prod-img-box"
+                        onclick="abrirModalProduto('Sucos Naturais e Refrigerantes Gelados', 'R$ 5,00', 'https://images.unsplash.com/photo-1613478223719-2ab802602423?w=800&auto=format&fit=crop&q=80', 'Sucos naturais espremidos na hora (laranja, abacaxi com hortelã, maracujá) ou refrigerantes em lata super gelados.', 'Sem conservantes nos sucos naturais.')">
+                        <img src="https://images.unsplash.com/photo-1613478223719-2ab802602423?w=600&auto=format&fit=crop&q=80"
+                            alt="Sucos Naturais e Bebidas Geladas" class="dash-prod-img"
+                            onerror="this.src='https://placehold.co/400x300/eeeeee/999999?text=Bebidas+Geladas'">
+                        <span class="dash-prod-tag" style="background: #0284c7;">100% Geladinho ❄️</span>
+                        <button type="button" class="dash-prod-zoom-btn" title="Ampliar Foto">🔍</button>
+                    </div>
+                    <div class="dash-prod-content">
+                        <div>
+                            <span class="dash-prod-cat">Bebidas Geladas</span>
+                            <h4 class="dash-prod-name">Sucos Naturais & Refrigerantes</h4>
+                            <p class="dash-prod-desc">
+                                Laranja natural espremida na hora, sucos de polpa de frutas e refrigerantes em lata
+                                trincando de gelados.
+                            </p>
+                        </div>
+                        <div class="dash-prod-bottom">
+                            <span class="dash-prod-price">R$ 5,00</span>
+                            <a href="menu.html" class="dash-prod-btn-order">
+                                🛒 Pedir Agora
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 7: Misto Quente Especial -->
+                <div class="dash-prod-card" data-cat="lanches">
+                    <div class="dash-prod-img-box"
+                        onclick="abrirModalProduto('Misto Quente Especial na Chapa', 'R$ 7,50', 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=800&auto=format&fit=crop&q=80', 'Pão de forma especial douradinho na chapa com manteiga da terra, duas camadas de presunto nobre e queijo prato derretido.', 'Contém glúten e derivados de leite.')">
+                        <img src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80"
+                            alt="Misto Quente Especial na Chapa" class="dash-prod-img"
+                            onerror="this.src='https://placehold.co/400x300/eeeeee/999999?text=Misto+Quente'">
+                        <span class="dash-prod-tag" style="background: #ea580c;">Quentinho na Chapa 🥪</span>
+                        <button type="button" class="dash-prod-zoom-btn" title="Ampliar Foto">🔍</button>
+                    </div>
+                    <div class="dash-prod-content">
+                        <div>
+                            <span class="dash-prod-cat">Lanches Rápidos</span>
+                            <h4 class="dash-prod-name">Misto Quente na Chapa</h4>
+                            <p class="dash-prod-desc">
+                                Pão dourado e crocante com generosa camada de queijo derretido e presunto, perfeito para
+                                o intervalo.
+                            </p>
+                        </div>
+                        <div class="dash-prod-bottom">
+                            <span class="dash-prod-price">R$ 7,50</span>
+                            <a href="menu.html" class="dash-prod-btn-order">
+                                🛒 Pedir Agora
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 8: Torta Holandesa Cremosa -->
+                <div class="dash-prod-card" data-cat="doces">
+                    <div class="dash-prod-img-box"
+                        onclick="abrirModalProduto('Torta Holandesa Cremosa Individual', 'R$ 8,50', 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=800&auto=format&fit=crop&q=80', 'Creme holandês aveludado com aroma de baunilha, base crocante de biscoitos finos e cobertura rica de ganache de chocolate meio amargo.', 'Contém leite, ovos e glúten.')">
+                        <img src="https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=600&auto=format&fit=crop&q=80"
+                            alt="Torta Holandesa Cremosa" class="dash-prod-img"
+                            onerror="this.src='https://placehold.co/400x300/eeeeee/999999?text=Torta+Holandesa'">
+                        <span class="dash-prod-tag" style="background: #7c3aed;">Sobremesa Gourmet 🍫</span>
+                        <button type="button" class="dash-prod-zoom-btn" title="Ampliar Foto">🔍</button>
+                    </div>
+                    <div class="dash-prod-content">
+                        <div>
+                            <span class="dash-prod-cat">Sobremesas Gourmet</span>
+                            <h4 class="dash-prod-name">Torta Holandesa Cremosa</h4>
+                            <p class="dash-prod-desc">
+                                Creme suave com aroma de baunilha, biscoitos crocantes e ganache pura de chocolate meio
+                                amargo.
+                            </p>
+                        </div>
+                        <div class="dash-prod-bottom">
+                            <span class="dash-prod-price">R$ 8,50</span>
+                            <a href="menu.html" class="dash-prod-btn-order">
+                                🛒 Pedir Agora
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
             </div>
+        </section>
 
-        </main>
+        <!-- 5. SEÇÃO: COMO FUNCIONA O FILAZERO -->
+        <section class="dash-section" id="como-funciona">
+            <div class="dash-section-header">
+                <span class="dash-section-badge">💡 Autoatendimento Inteligente</span>
+                <h2 class="dash-section-title">Como Funciona o FilaZero SENAI</h2>
+                <p class="dash-section-subtitle">
+                    Praticidade absoluta para os estudantes: seu pedido pronto em apenas 3 passos rápidos.
+                </p>
+            </div>
 
+            <div class="dash-steps-grid">
+                <!-- Passo 1 -->
+                <div class="dash-step-card">
+                    <div class="dash-step-num">1</div>
+                    <h4>📱 Escolha no Celular ou Totem</h4>
+                    <p>
+                        Acesse a cantina com seu e-mail cadastrado, visualize o cardápio com preços atualizados e
+                        adicione seus itens favoritos ao carrinho.
+                    </p>
+                </div>
+
+                <!-- Passo 2 -->
+                <div class="dash-step-card">
+                    <div class="dash-step-num">2</div>
+                    <h4>💳 Pague com PIX ou Cartão</h4>
+                    <p>
+                        Finalize com praticidade e receba instantaneamente sua <strong>senha digital numerada</strong>
+                        para acompanhamento do preparo.
+                    </p>
+                </div>
+
+                <!-- Passo 3 -->
+                <div class="dash-step-card">
+                    <div class="dash-step-num">3</div>
+                    <h4>🔔 Retire no Sinal Sem Filas</h4>
+                    <p>
+                        Assim que o sinal do intervalo tocar, seu pedido já estará separado no balcão. Basta apresentar
+                        sua senha e aproveitar seu intervalo!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE VISUALIZAÇÃO DE FOTO DO PRODUTO -->
+    <div class="dash-modal-overlay" id="dashModalOverlay" onclick="fecharModalProduto(event)">
+        <div class="dash-modal-box" onclick="event.stopPropagation()">
+            <button type="button" class="dash-modal-close" onclick="fecharModalProduto()">✕</button>
+            <img id="modalImg" src="" alt="Foto do Produto" class="dash-modal-img">
+            <div class="dash-modal-content">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 8px;">
+                    <h3 id="modalTitle" class="dash-modal-title">Nome do Produto</h3>
+                    <span id="modalPrice" class="dash-modal-price">R$ 0,00</span>
+                </div>
+                <p id="modalDesc" class="dash-modal-desc">Descrição detalhada do produto.</p>
+                <div class="dash-modal-meta">
+                    <span id="modalMeta">🌾 Informações de ingredientes</span>
+                </div>
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button type="button" class="btn-dash-outline" onclick="fecharModalProduto()">Fechar</button>
+                    <a href="menu.html" class="btn-dash-primary">
+                        🛒 Fazer Pedido Deste Item
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL -->
-    <script src="script.js?v=4"></script>
+    <!-- RODAPÉ COMPLETO DO DASHBOARD -->
+    <footer class="dash-footer">
+        <div class="dash-footer-container">
+            <div class="dash-footer-brand">
+                <img src="senai-logo.png" alt="Logo SENAI" class="header-logo senai-logo">
+                <p>
+                    O Serviço Nacional de Aprendizagem Industrial é o maior complexo de educação profissional da América
+                    Latina. O sistema FilaZero Cantina garante tecnologia, rapidez e alimentação nutritiva para nossos
+                    alunos.
+                </p>
+            </div>
+
+            <div class="dash-footer-col">
+                <h5>Navegação Rápida</h5>
+                <ul class="dash-footer-links">
+                    <li><a href="#inicio">Início / Topo</a></li>
+                    <li><a href="#escola">Sobre o SENAI</a></li>
+                    <li><a href="#equipe">Equipe da Cantina</a></li>
+                    <li><a href="#produtos">Fotos & Cardápio</a></li>
+                    <li><a href="#como-funciona">Como Funciona</a></li>
+                </ul>
+            </div>
+
+            <div class="dash-footer-col">
+                <h5>Portais do Sistema</h5>
+                <ul class="dash-footer-links">
+                    <li><a href="menu.html">🍔 Cardápio Completo</a></li>
+                    <li><a href="cadastro.html">📝 Cadastro de Novo Aluno</a></li>
+                    <li><a href="categorias.html">🏷️ Categorias de Produtos</a></li>
+                    <li><a href="loginADM.html">🔒 Acesso Administrativo Cantina</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="dash-footer-bottom">
+            <p>© 2026 SENAI • Sistema de Autoatendimento da Cantina FilaZero. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT PRINCIPAL DO SISTEMA (Gerencia Temas, Cores e Logo) -->
+    <script src="script.js?v=6"></script>
+
+    <!-- SCRIPTS EXCLUSIVOS DO DASHBOARD -->
+    <script>
+        // Relógio Dinâmico e Detecção do Intervalo Ativo
+        function atualizarRelogioEIntervalo() {
+            const agora = new Date();
+            const horas = String(agora.getHours()).padStart(2, '0');
+            const minutos = String(agora.getMinutes()).padStart(2, '0');
+            const segundos = String(agora.getSeconds()).padStart(2, '0');
+
+            const relogioEl = document.getElementById('dash-live-clock');
+            if (relogioEl) {
+                relogioEl.textContent = `${horas}:${minutos}:${segundos}`;
+            }
+
+            const minutosTotais = agora.getHours() * 60 + agora.getMinutes();
+
+            // Intervalo Manhã: 09:40 (580 min) a 10:00 (600 min)
+            const isManha = minutosTotais >= 580 && minutosTotais <= 600;
+            // Intervalo Tarde: 15:10 (910 min) a 15:30 (930 min)
+            const isTarde = minutosTotais >= 910 && minutosTotais <= 930;
+            // Intervalo Noite: 20:40 (1240 min) a 21:00 (1260 min)
+            const isNoite = minutosTotais >= 1240 && minutosTotais <= 1260;
+
+            const itemManha = document.getElementById('intervalo-manha');
+            const itemTarde = document.getElementById('intervalo-tarde');
+            const itemNoite = document.getElementById('intervalo-noite');
+
+            const tagManha = document.getElementById('tag-manha');
+            const tagTarde = document.getElementById('tag-tarde');
+            const tagNoite = document.getElementById('tag-noite');
+
+            const statusHero = document.getElementById('live-status-hero');
+
+            if (itemManha) itemManha.classList.toggle('active-now', isManha);
+            if (itemTarde) itemTarde.classList.toggle('active-now', isTarde);
+            if (itemNoite) itemNoite.classList.toggle('active-now', isNoite);
+
+            if (tagManha) tagManha.textContent = isManha ? '🔔 INTERVALO AGORA!' : '09:40 - 10:00';
+            if (tagTarde) tagTarde.textContent = isTarde ? '🔔 INTERVALO AGORA!' : '15:10 - 15:30';
+            if (tagNoite) tagNoite.textContent = isNoite ? '🔔 INTERVALO AGORA!' : '20:40 - 21:00';
+
+            if (statusHero) {
+                if (isManha || isTarde || isNoite) {
+                    statusHero.textContent = '🔔 INTERVALO ACONTECENDO AGORA • RETIRADA NO BALCÃO!';
+                } else {
+                    statusHero.textContent = 'CANTINA ABERTA • SISTEMA FILAZERO ATIVO';
+                }
+            }
+        }
+
+        setInterval(atualizarRelogioEIntervalo, 1000);
+        atualizarRelogioEIntervalo();
+
+        // Filtro de Categorias dos Produtos
+        function filtrarProdutosDash(categoria, botao) {
+            // Atualiza botões
+            document.querySelectorAll('.dash-filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (botao) botao.classList.add('active');
+
+            // Filtra os cards
+            const cards = document.querySelectorAll('.dash-prod-card');
+            cards.forEach(card => {
+                const cat = card.getAttribute('data-cat');
+                if (categoria === 'todos' || cat === categoria) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Modal Interativo de Foto de Produto
+        function abrirModalProduto(nome, preco, imagem, descricao, meta) {
+            document.getElementById('modalTitle').textContent = nome;
+            document.getElementById('modalPrice').textContent = preco;
+            document.getElementById('modalImg').src = imagem;
+            document.getElementById('modalDesc').textContent = descricao;
+            document.getElementById('modalMeta').textContent = meta;
+
+            const modal = document.getElementById('dashModalOverlay');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharModalProduto(e) {
+            const modal = document.getElementById('dashModalOverlay');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Fechar com ESC
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') fecharModalProduto();
+        });
+    </script>
 
 </body>
 

@@ -1,15 +1,22 @@
 <?php
-// Configurações padrão do XAMPP
+/**
+ * Conexão Híbrida: Supabase (REST API) ou MySQL local (XAMPP)
+ * Se DATABASE_DRIVER for 'supabase' e as credenciais estiverem preenchidas,
+ * utiliza o Supabase com fallback inteligente para MySQL local se necessário.
+ */
+require_once 'config.php';
+require_once 'supabase-client.php';
+
+$supabase = new SupabaseClient();
+
+// Mantém objeto $conn para scripts legados ou modo MySQL
 $servidor = "localhost";
 $usuario = "root"; 
-$senha = ""; // No XAMPP, a senha do root geralmente é vazia
+$senha = "";
 $banco = "cantina_senai";
 
-// Tenta criar a conexão
-$conn = new mysqli($servidor, $usuario, $senha, $banco);
+// Supressão de erro caso MySQL do XAMPP não esteja ligado quando estiver no modo Supabase
+$conn = @new mysqli($servidor, $usuario, $senha, $banco);
 
-// Verifica se deu algum erro
-if ($conn->connect_error) {
-    die("Falha na conexão com o banco de dados: " . $conn->connect_error);
-}
+$usarSupabase = (defined('DATABASE_DRIVER') && DATABASE_DRIVER === 'supabase' && $supabase->isConfigured());
 ?>

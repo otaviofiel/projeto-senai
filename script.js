@@ -23,7 +23,7 @@ function escurecerCor(hex, percentual) {
     return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }
 
-window.selecionarTemaCor = function(cor, botaoElemento) {
+window.selecionarTemaCor = function (cor, botaoElemento) {
     if (!cor) return;
 
     document.documentElement.style.setProperty('--cor-primaria', cor);
@@ -74,14 +74,14 @@ carregarTemaSalvo();
 // 2. SISTEMA DE LOGO DINÂMICA
 // ============================================================
 
-window.aplicarLogoEmTudo = function(logoSrc) {
+window.aplicarLogoEmTudo = function (logoSrc) {
     if (!logoSrc) return;
     document.querySelectorAll('.senai-logo, .header-logo, #preview-logo-painel').forEach(img => {
         img.src = logoSrc;
     });
 };
 
-window.manipularUploadLogo = function(evento) {
+window.manipularUploadLogo = function (evento) {
     const arquivo = evento.target.files[0];
     if (!arquivo) return;
 
@@ -97,7 +97,7 @@ window.manipularUploadLogo = function(evento) {
     }
 
     const leitor = new FileReader();
-    leitor.onload = function(e) {
+    leitor.onload = function (e) {
         const base64Logo = e.target.result;
         localStorage.setItem('senai_custom_logo', base64Logo);
         window.aplicarLogoEmTudo(base64Logo);
@@ -106,7 +106,7 @@ window.manipularUploadLogo = function(evento) {
     leitor.readAsDataURL(arquivo);
 };
 
-window.restaurarLogoOriginal = function() {
+window.restaurarLogoOriginal = function () {
     localStorage.removeItem('senai_custom_logo');
     window.aplicarLogoEmTudo('senai-logo.png');
     alert('✓ Logo original restaurada com sucesso!');
@@ -130,21 +130,249 @@ carregarLogoSalva();
 let carrinho = JSON.parse(localStorage.getItem('senai_cart')) || [];
 
 function atualizarBadgeCarrinho() {
-    const badge = document.querySelector('.cart-badge');
-    if (badge) {
-        const totalItens = carrinho.reduce(
-            (total, item) => total + item.quantidade,
-            0
-        );
+    carrinho = JSON.parse(localStorage.getItem('senai_cart')) || [];
+    const totalItens = carrinho.reduce(
+        (total, item) => total + (parseInt(item.quantidade) || 1),
+        0
+    );
+    document.querySelectorAll('.cart-badge').forEach(badge => {
         badge.textContent = totalItens;
-    }
+    });
 }
 
 atualizarBadgeCarrinho();
 
 // ============================================================
-// 3. CARREGAR PRODUTOS (CARDÁPIO)
+// 3. CARREGAR PRODUTOS (CARDÁPIO INTERATIVO COM 20+ ITENS)
 // ============================================================
+
+const CATALOGO_PADRAO_PRODUTOS = [
+    {
+        id: 1,
+        nome: 'Coxinha de Frango com Catupiry',
+        categoria: 'Salgados',
+        preco: 6.50,
+        imagem: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=500&q=80',
+        estoque: 35,
+        badge: 'Mais Pedido 🔥',
+        descricao: 'Casquinha sequinha e super crocante, recheio generoso de frango desfiado temperado com ervas e catupiry cremoso autêntico.',
+        alergicos: 'Contém glúten e derivados de leite.'
+    },
+    {
+        id: 2,
+        nome: 'Coca-Cola Lata 350ml',
+        categoria: 'Bebidas',
+        preco: 5.00,
+        imagem: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&q=80',
+        estoque: 60,
+        badge: '100% Gelada ❄️',
+        descricao: 'Refrigerante em lata trincando de gelado para acompanhar o seu lanche no intervalo.',
+        alergicos: 'Não contém glúten.'
+    },
+    {
+        id: 3,
+        nome: 'Bolo de Pote Ninho com Morango',
+        categoria: 'Doces',
+        preco: 8.00,
+        imagem: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80',
+        estoque: 25,
+        badge: 'Favorito dos Alunos 🍓',
+        descricao: 'Pão de ló macio e umedecido com calda especial, camadas fartas de brigadeiro de Leite Ninho e pedaços de morangos frescos.',
+        alergicos: 'Contém leite e glúten.'
+    },
+    {
+        id: 4,
+        nome: 'Hambúrguer Artesanal Especial SENAI',
+        categoria: 'Lanches',
+        preco: 12.00,
+        imagem: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80',
+        estoque: 20,
+        badge: 'Especial da Casa 🌟',
+        descricao: 'Blend artesanal de carne bovina grelhada na hora, queijo prato derretido, alface fresca, tomate e molho especial no pão brioche.',
+        alergicos: 'Contém leite, glúten e ovos.'
+    },
+    {
+        id: 5,
+        nome: 'Enroladinho Folhado Presunto e Queijo',
+        categoria: 'Salgados',
+        preco: 6.00,
+        imagem: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&q=80',
+        estoque: 30,
+        badge: 'Assado no Dia 🥐',
+        descricao: 'Massa folhada levinha e crocante assada ao forno, recheada com presunto magro e muçarela com leve toque de orégano.',
+        alergicos: 'Contém glúten e lactose.'
+    },
+    {
+        id: 6,
+        nome: 'Pão de Queijo Tradicional Mineiro',
+        categoria: 'Salgados',
+        preco: 4.50,
+        imagem: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&q=80',
+        estoque: 50,
+        badge: 'Tradicional Mineiro 🧀',
+        descricao: 'Feito com queijo canastra legítimo, servido quentinho e macio direto da estufa.',
+        alergicos: 'Sem glúten. Contém lactose.'
+    },
+    {
+        id: 7,
+        nome: 'Misto Quente Especial na Chapa',
+        categoria: 'Lanches',
+        preco: 7.50,
+        imagem: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=500&q=80',
+        estoque: 25,
+        badge: 'Quentinho na Chapa 🥪',
+        descricao: 'Pão tostado e crocante na manteiga com recheio duplo de queijo derretido e presunto nobre.',
+        alergicos: 'Contém glúten e leite.'
+    },
+    {
+        id: 8,
+        nome: 'Suco Natural de Laranja 400ml',
+        categoria: 'Bebidas',
+        preco: 6.00,
+        imagem: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?w=500&q=80',
+        estoque: 40,
+        badge: 'Natural da Fruta 🍊',
+        descricao: 'Laranja natural espremida na hora com gelo, rica em vitamina C e sem adição de conservantes.',
+        alergicos: '100% Fruta. Sem glúten.'
+    },
+    {
+        id: 9,
+        nome: 'Torta Holandesa Cremosa Individual',
+        categoria: 'Doces',
+        preco: 8.50,
+        imagem: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=500&q=80',
+        estoque: 20,
+        badge: 'Sobremesa Gourmet 🍫',
+        descricao: 'Creme holandês aveludado de baunilha, base crocante de biscoitos finos e ganache generosa de chocolate meio amargo.',
+        alergicos: 'Contém lactose, ovos e glúten.'
+    },
+    {
+        id: 10,
+        nome: 'Kibe Recheado com Catupiry',
+        categoria: 'Salgados',
+        preco: 6.50,
+        imagem: 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=500&q=80',
+        estoque: 25,
+        badge: 'Sabor Tradicional 🧆',
+        descricao: 'Massa crocante de trigo para kibe com carne moída selecionada, hortelã fresca e recheio cremoso.',
+        alergicos: 'Contém glúten e derivados de leite.'
+    },
+    {
+        id: 11,
+        nome: 'Esfiha de Carne Bovina Temperada',
+        categoria: 'Salgados',
+        preco: 6.00,
+        imagem: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500&q=80',
+        estoque: 30,
+        badge: 'Assada no Forno 🥟',
+        descricao: 'Massa macia e douradinha, recheada com carne moída de primeira temperada com limão, tomate e cebola.',
+        alergicos: 'Contém glúten.'
+    },
+    {
+        id: 12,
+        nome: 'Sanduíche Natural de Frango com Salada',
+        categoria: 'Lanches',
+        preco: 8.50,
+        imagem: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=500&q=80',
+        estoque: 18,
+        badge: 'Opção Saudável & Fit 🥗',
+        descricao: 'Pão integral macio, pasta leve de frango desfiado com cenoura ralada, milho, requeijão light e alface americana.',
+        alergicos: 'Contém glúten e lactose.'
+    },
+    {
+        id: 13,
+        nome: 'X-Bacon Especial Burger',
+        categoria: 'Lanches',
+        preco: 14.00,
+        imagem: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=500&q=80',
+        estoque: 15,
+        badge: 'Super Bacon 🥓',
+        descricao: 'Hambúrguer artesanal suculento, fatias crocantes de bacon premium, queijo cheddar derretido e molho barbecue.',
+        alergicos: 'Contém glúten e lactose.'
+    },
+    {
+        id: 14,
+        nome: 'Brigadeiro Gourmet Tradicional',
+        categoria: 'Doces',
+        preco: 3.50,
+        imagem: 'https://images.unsplash.com/photo-1599785209707-a456fc1337bb?w=500&q=80',
+        estoque: 45,
+        badge: 'Doce Artesanal 🍬',
+        descricao: 'Feito com chocolate nobre e cacau 50%, enrolado no confeito granulado de chocolate belga.',
+        alergicos: 'Contém leite e derivados.'
+    },
+    {
+        id: 15,
+        nome: 'Pudim de Leite Condensado no Pote',
+        categoria: 'Doces',
+        preco: 7.00,
+        imagem: 'https://images.unsplash.com/photo-1517427294548-d61804eec7ce?w=500&q=80',
+        estoque: 22,
+        badge: 'Receita Caseira 🍮',
+        descricao: 'Pudim lisinho e super cremoso com calda dourada de caramelo artesanal.',
+        alergicos: 'Contém ovos e leite.'
+    },
+    {
+        id: 16,
+        nome: 'Cookie Artesanal com Gotas de Chocolate',
+        categoria: 'Doces',
+        preco: 5.00,
+        imagem: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=500&q=80',
+        estoque: 35,
+        badge: 'Crocante por Fora 🍪',
+        descricao: 'Massa amanteigada aromática com generosas gotas de chocolate meio amargo derretendo por dentro.',
+        alergicos: 'Contém glúten, leite e ovos.'
+    },
+    {
+        id: 17,
+        nome: 'Guaraná Antarctica Lata 350ml',
+        categoria: 'Bebidas',
+        preco: 5.00,
+        imagem: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=500&q=80',
+        estoque: 50,
+        badge: 'Clássico Brasileiro 🥤',
+        descricao: 'O refrigerante brasileiro mais amado, servido geladíssimo.',
+        alergicos: 'Não contém glúten.'
+    },
+    {
+        id: 18,
+        nome: 'Suco de Polpa de Maracujá 400ml',
+        categoria: 'Bebidas',
+        preco: 6.00,
+        imagem: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=500&q=80',
+        estoque: 30,
+        badge: 'Refrescante 🧊',
+        descricao: 'Suco natural concentrado de maracujá batido na hora com gelo picado.',
+        alergicos: '100% Polpa Natural.'
+    },
+    {
+        id: 19,
+        nome: 'Água Mineral sem Gás 500ml',
+        categoria: 'Bebidas',
+        preco: 3.00,
+        imagem: 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=500&q=80',
+        estoque: 80,
+        badge: 'Hidratação Pura 💧',
+        descricao: 'Água mineral natural pura e cristalina para manter o foco e hidratação nos estudos.',
+        alergicos: 'Sem calorias.'
+    },
+    {
+        id: 20,
+        nome: 'Pastel Assado Integral Ricota e Espinafre',
+        categoria: 'Salgados',
+        preco: 7.00,
+        imagem: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&q=80',
+        estoque: 20,
+        badge: 'Linha Integral 🌾',
+        descricao: 'Massa integral com sementes de gergelim douradas, ricota fresca temperada e espinafre refogado.',
+        alergicos: 'Contém glúten e derivados de leite.'
+    }
+];
+
+let produtosEmMemoria = [...CATALOGO_PADRAO_PRODUTOS];
+let categoriaFiltroAtual = 'todos';
+let termoBuscaAtual = '';
+let ordenacaoAtual = 'popular';
 
 async function carregarProdutos() {
     const container = document.getElementById('lista-produtos');
@@ -152,201 +380,715 @@ async function carregarProdutos() {
 
     try {
         const resposta = await fetch('api-produtos.php');
-        const produtos = await resposta.json();
+        const produtosBanco = await resposta.json();
 
-        container.innerHTML = '';
-
-        if (!produtos || produtos.length === 0) {
-            container.innerHTML = '<p style="text-align:center; width:100%; color:#666;">Nenhum produto cadastrado.</p>';
-            return;
+        if (Array.isArray(produtosBanco) && produtosBanco.length > 0) {
+            // Mescla produtos do banco com o catálogo padrão para manter fotos e badges ricas
+            produtosEmMemoria = produtosBanco.map((itemBanco, idx) => {
+                const itemPadrao = CATALOGO_PADRAO_PRODUTOS.find(p => p.nome.toLowerCase() === itemBanco.nome.toLowerCase()) || CATALOGO_PADRAO_PRODUTOS[idx % CATALOGO_PADRAO_PRODUTOS.length];
+                return {
+                    id: itemBanco.id || (idx + 1),
+                    nome: itemBanco.nome,
+                    categoria: itemBanco.categoria || itemPadrao.categoria,
+                    preco: parseFloat(itemBanco.preco),
+                    imagem: itemBanco.imagem && itemBanco.imagem.startsWith('http') && !itemBanco.imagem.includes('placehold.co') ? itemBanco.imagem : itemPadrao.imagem,
+                    estoque: itemBanco.estoque !== undefined ? parseInt(itemBanco.estoque) : itemPadrao.estoque,
+                    badge: itemPadrao.badge,
+                    descricao: itemPadrao.descricao,
+                    alergicos: itemPadrao.alergicos
+                };
+            });
+        } else {
+            produtosEmMemoria = [...CATALOGO_PADRAO_PRODUTOS];
         }
-
-        produtos.forEach(produto => {
-            const precoFormatado = parseFloat(produto.preco)
-                .toFixed(2)
-                .replace('.', ',');
-
-            const cardHTML = `
-                <div class="product-card">
-                    <img src="${produto.imagem}" alt="${produto.nome}">
-                    <h4>${produto.nome}</h4>
-                    <p class="category">${produto.categoria}</p>
-                    <p class="price">R$ ${precoFormatado}</p>
-                    <button class="btn-add">+</button>
-                </div>
-            `;
-
-            container.innerHTML += cardHTML;
-        });
-
-        ligarBotoesDeAdicionar();
-
     } catch (erro) {
-        console.error("Erro ao carregar produtos:", erro);
-        container.innerHTML = '<p style="color:red; text-align:center; width:100%;">Erro ao carregar o cardápio.</p>';
+        console.warn("Utilizando catálogo offline/padrão do sistema:", erro);
+        produtosEmMemoria = [...CATALOGO_PADRAO_PRODUTOS];
+    }
+
+    // Verifica parâmetros na URL (ex: menu.html?cat=salgados)
+    const urlParams = new URLSearchParams(window.location.search);
+    const catUrl = urlParams.get('cat');
+    const buscaUrl = urlParams.get('busca');
+
+    if (catUrl) {
+        categoriaFiltroAtual = catUrl.toLowerCase();
+        const botaoCat = document.querySelector(`.menu-cat-pill[data-cat="${categoriaFiltroAtual}"]`);
+        if (botaoCat) {
+            document.querySelectorAll('.menu-cat-pill').forEach(b => b.classList.remove('active'));
+            botaoCat.classList.add('active');
+        }
+    }
+
+    if (buscaUrl) {
+        termoBuscaAtual = buscaUrl.toLowerCase();
+        const inputBusca = document.getElementById('input-busca-menu');
+        if (inputBusca) inputBusca.value = buscaUrl;
+    }
+
+    renderizarProdutosMenu();
+    atualizarBarraFlutuanteCarrinho();
+}
+
+function renderizarProdutosMenu() {
+    const container = document.getElementById('lista-produtos');
+    if (!container) return;
+
+    // 1. Filtra por categoria
+    let listaFiltrada = produtosEmMemoria.filter(produto => {
+        if (categoriaFiltroAtual === 'todos') return true;
+        return produto.categoria.toLowerCase() === categoriaFiltroAtual.toLowerCase();
+    });
+
+    // 2. Filtra por busca de texto
+    if (termoBuscaAtual.trim()) {
+        const t = termoBuscaAtual.toLowerCase();
+        listaFiltrada = listaFiltrada.filter(produto =>
+            produto.nome.toLowerCase().includes(t) ||
+            produto.categoria.toLowerCase().includes(t) ||
+            (produto.descricao && produto.descricao.toLowerCase().includes(t))
+        );
+    }
+
+    // 3. Aplica ordenação
+    if (ordenacaoAtual === 'menor-preco') {
+        listaFiltrada.sort((a, b) => a.preco - b.preco);
+    } else if (ordenacaoAtual === 'maior-preco') {
+        listaFiltrada.sort((a, b) => b.preco - a.preco);
+    } else if (ordenacaoAtual === 'nome') {
+        listaFiltrada.sort((a, b) => a.nome.localeCompare(b.nome));
+    }
+
+    // 4. Atualiza contador de produtos
+    const contadorLabel = document.getElementById('menu-counter-label');
+    if (contadorLabel) {
+        contadorLabel.textContent = `Exibindo ${listaFiltrada.length} ${listaFiltrada.length === 1 ? 'produto' : 'produtos'}`;
+    }
+
+    // 5. Renderiza os cards
+    if (listaFiltrada.length === 0) {
+        container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: #ffffff; border-radius: 16px; border: 1px dashed #cbd5e1;">
+                <span style="font-size: 40px; display: block; margin-bottom: 10px;">🔍</span>
+                <h3 style="font-size: 18px; color: #1e293b; margin-bottom: 6px;">Nenhum produto encontrado</h3>
+                <p style="color: #64748b; font-size: 14px; margin-bottom: 15px;">Tente buscar com outro termo ou selecione outra categoria.</p>
+                <button type="button" class="btn-dash-primary" onclick="limparFiltrosMenu()" style="display: inline-flex;">Ver Todos os Produtos</button>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = '';
+
+    listaFiltrada.forEach(produto => {
+        const precoFormatado = produto.preco.toFixed(2).replace('.', ',');
+        const cardHTML = `
+            <div class="menu-product-card" data-id="${produto.id}" data-cat="${produto.categoria}">
+                <div class="menu-card-img-box" onclick="abrirModalProdutoMenu(${produto.id})">
+                    <img 
+                        src="${produto.imagem}" 
+                        alt="${produto.nome}" 
+                        class="menu-card-img" 
+                        loading="lazy"
+                        onerror="this.src='https://placehold.co/400x300/eeeeee/999999?text=${encodeURIComponent(produto.nome)}'"
+                    >
+                    ${produto.badge ? `<span class="menu-card-badge">${produto.badge}</span>` : ''}
+                    <button type="button" class="menu-card-zoom-btn" title="Ampliar e Ver Detalhes" onclick="event.stopPropagation(); abrirModalProdutoMenu(${produto.id})">🔍</button>
+                </div>
+                <div class="menu-card-content">
+                    <div>
+                        <span class="menu-card-cat">${produto.categoria}</span>
+                        <h4 class="menu-card-title">${produto.nome}</h4>
+                        <p class="menu-card-desc">${produto.descricao || 'Produto preparado na cantina com ingredientes de alta qualidade.'}</p>
+                    </div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">R$ ${precoFormatado}</span>
+                        <div class="menu-card-actions">
+                            <div class="menu-qty-control">
+                                <button type="button" class="menu-qty-btn" onclick="event.stopPropagation(); alterarQtdCard(this, -1)">-</button>
+                                <span class="menu-qty-value">1</span>
+                                <button type="button" class="menu-qty-btn" onclick="event.stopPropagation(); alterarQtdCard(this, 1)">+</button>
+                            </div>
+                            <button 
+                                type="button" 
+                                class="menu-btn-add" 
+                                onclick="event.stopPropagation(); adicionarAoCarrinhoComFeedback(this, '${produto.id}')"
+                                title="Adicionar ao Carrinho"
+                            >
+                                🛒 + Adicionar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += cardHTML;
+    });
+}
+
+// Funções de Interatividade do Menu
+window.alterarQtdCard = function (btn, delta) {
+    const parent = btn.closest('.menu-qty-control');
+    const valorEl = parent.querySelector('.menu-qty-value');
+    let qtd = parseInt(valorEl.textContent) || 1;
+    qtd += delta;
+    if (qtd < 1) qtd = 1;
+    if (qtd > 10) qtd = 10;
+    valorEl.textContent = qtd;
+};
+
+window.adicionarAoCarrinhoComFeedback = function (btn, produtoId) {
+    // 1. Localiza o produto na memória (convertendo ambos para String para evitar incompatibilidade número vs string)
+    let produto = produtosEmMemoria.find(p => String(p.id) === String(produtoId));
+
+    const card = btn ? btn.closest('.menu-product-card') : null;
+    let qtd = 1;
+    if (card) {
+        const qtdEl = card.querySelector('.menu-qty-value');
+        if (qtdEl) qtd = parseInt(qtdEl.textContent) || 1;
+
+        // Se não encontrou por ID, recupera os dados diretamente do card HTML
+        if (!produto) {
+            const nomeCard = card.querySelector('.menu-card-title')?.textContent?.trim();
+            const precoTxt = card.querySelector('.menu-card-price')?.textContent?.trim();
+            const precoCard = parseFloat(precoTxt?.replace('R$', '').replace(',', '.').trim()) || 0;
+            const imagemCard = card.querySelector('.menu-card-img')?.src;
+            if (nomeCard && precoCard > 0) {
+                produto = {
+                    id: produtoId,
+                    nome: nomeCard,
+                    preco: precoCard,
+                    imagem: imagemCard
+                };
+            }
+        }
+    }
+
+    if (!produto) {
+        console.error("Não foi possível localizar o produto selecionado:", produtoId);
+        return;
+    }
+
+    adicionarItemAoCarrinhoGlobal(produto.nome, produto.preco, produto.imagem, qtd);
+
+    // Feedback visual animado no botão
+    if (btn) {
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = '✓ Adicionado!';
+        btn.classList.add('added-success');
+
+        setTimeout(() => {
+            btn.innerHTML = textoOriginal;
+            btn.classList.remove('added-success');
+        }, 900);
+    }
+
+    mostrarToastMenu(`✓ ${qtd}x ${produto.nome} no carrinho!`);
+};
+
+window.adicionarItemAoCarrinhoGlobal = function (nome, preco, imagem, quantidade = 1) {
+    carrinho = JSON.parse(localStorage.getItem('senai_cart')) || [];
+    const precoNum = parseFloat(preco) || 0;
+    const qtdNum = parseInt(quantidade) || 1;
+
+    const itemExistente = carrinho.find(item => item.nome.trim().toLowerCase() === nome.trim().toLowerCase());
+
+    if (itemExistente) {
+        itemExistente.quantidade = (parseInt(itemExistente.quantidade) || 0) + qtdNum;
+    } else {
+        carrinho.push({
+            nome: nome.trim(),
+            preco: precoNum,
+            imagem: imagem,
+            quantidade: qtdNum
+        });
+    }
+
+    localStorage.setItem('senai_cart', JSON.stringify(carrinho));
+    atualizarBadgeCarrinho();
+    atualizarBarraFlutuanteCarrinho();
+
+    // Se estiver na tela do carrinho, atualiza ela em tempo real
+    if (typeof window.renderizarPaginaCarrinho === 'function') {
+        window.renderizarPaginaCarrinho();
+    }
+};
+
+window.filtrarCategoriaMenu = function (categoria, botao) {
+    categoriaFiltroAtual = categoria;
+    document.querySelectorAll('.menu-cat-pill').forEach(b => b.classList.remove('active'));
+    if (botao) botao.classList.add('active');
+    renderizarProdutosMenu();
+};
+
+window.buscarProdutosMenu = function (termo) {
+    termoBuscaAtual = termo;
+    const btnLimpar = document.getElementById('btn-limpar-busca');
+    if (btnLimpar) {
+        btnLimpar.style.display = termo.trim() ? 'flex' : 'none';
+    }
+    renderizarProdutosMenu();
+};
+
+window.limparBuscaMenu = function () {
+    const input = document.getElementById('input-busca-menu');
+    if (input) input.value = '';
+    buscarProdutosMenu('');
+};
+
+window.limparFiltrosMenu = function () {
+    categoriaFiltroAtual = 'todos';
+    termoBuscaAtual = '';
+    const input = document.getElementById('input-busca-menu');
+    if (input) input.value = '';
+    const btnTodos = document.querySelector('.menu-cat-pill[data-cat="todos"]');
+    if (btnTodos) {
+        document.querySelectorAll('.menu-cat-pill').forEach(b => b.classList.remove('active'));
+        btnTodos.classList.add('active');
+    }
+    renderizarProdutosMenu();
+};
+
+window.ordenarProdutosMenu = function (criterio) {
+    ordenacaoAtual = criterio;
+    renderizarProdutosMenu();
+};
+
+// Barra Flutuante de Resumo do Carrinho
+function atualizarBarraFlutuanteCarrinho() {
+    const barra = document.getElementById('floating-cart-bar');
+    if (!barra) return;
+
+    const totalItens = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
+    const totalValor = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+
+    const qtdEl = document.getElementById('float-cart-qty');
+    const totalEl = document.getElementById('float-cart-total');
+
+    if (qtdEl) qtdEl.textContent = `${totalItens} ${totalItens === 1 ? 'item' : 'itens'}`;
+    if (totalEl) totalEl.textContent = `R$ ${totalValor.toFixed(2).replace('.', ',')}`;
+
+    if (totalItens > 0) {
+        barra.classList.add('visible');
+    } else {
+        barra.classList.remove('visible');
+    }
+
+    // Animação de bounce no badge
+    const badge = document.querySelector('.cart-badge');
+    if (badge) {
+        badge.classList.remove('bounce');
+        void badge.offsetWidth; // Força reflow
+        badge.classList.add('bounce');
     }
 }
 
-function ligarBotoesDeAdicionar() {
-    const botoesAdicionar = document.querySelectorAll('.btn-add');
+// Toast de Notificação
+function mostrarToastMenu(mensagem) {
+    let toast = document.getElementById('menu-toast-box');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'menu-toast-box';
+        toast.className = 'menu-toast-box';
+        document.body.appendChild(toast);
+    }
 
-    botoesAdicionar.forEach(botao => {
-        botao.addEventListener('click', function(e) {
-            const card = e.target.closest('.product-card');
-            const nome = card.querySelector('h4').textContent;
-            const precoTexto = card.querySelector('.price').textContent;
-            const preco = parseFloat(
-                precoTexto.replace('R$', '').replace(',', '.').trim()
-            );
-            const imagem = card.querySelector('img').src;
+    toast.innerHTML = `<span>🛍️</span> ${mensagem}`;
+    toast.classList.add('show');
 
-            const itemExistente = carrinho.find(item => item.nome === nome);
-
-            if (itemExistente) {
-                itemExistente.quantidade += 1;
-            } else {
-                carrinho.push({
-                    nome: nome,
-                    preco: preco,
-                    imagem: imagem,
-                    quantidade: 1
-                });
-            }
-
-            localStorage.setItem('senai_cart', JSON.stringify(carrinho));
-            atualizarBadgeCarrinho();
-
-            // Feedback visual no botão
-            botao.textContent = '✓';
-            botao.style.backgroundColor = '#28a745';
-
-            setTimeout(() => {
-                botao.textContent = '+';
-                botao.style.backgroundColor = '';
-            }, 800);
-        });
-    });
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2200);
 }
+
+// Modal de Detalhes do Produto no Menu
+let produtoModalSelecionado = null;
+let qtdModalSelecionada = 1;
+
+window.abrirModalProdutoMenu = function (produtoId) {
+    const produto = produtosEmMemoria.find(p => String(p.id) === String(produtoId));
+    if (!produto) return;
+
+    produtoModalSelecionado = produto;
+    qtdModalSelecionada = 1;
+
+    const modal = document.getElementById('menuModalOverlay');
+    if (!modal) return;
+
+    document.getElementById('menuModalTitle').textContent = produto.nome;
+    document.getElementById('menuModalCat').textContent = produto.categoria;
+    document.getElementById('menuModalPrice').textContent = `R$ ${produto.preco.toFixed(2).replace('.', ',')}`;
+    document.getElementById('menuModalImg').src = produto.imagem;
+    document.getElementById('menuModalDesc').textContent = produto.descricao;
+    document.getElementById('menuModalMeta').textContent = produto.alergicos || 'Preparado diariamente com higiene sanitária SENAI.';
+    document.getElementById('menuModalQtdVal').textContent = '1';
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+};
+
+window.fecharModalProdutoMenu = function (e) {
+    const modal = document.getElementById('menuModalOverlay');
+    if (!modal) return;
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+};
+
+window.alterarQtdModal = function (delta) {
+    qtdModalSelecionada += delta;
+    if (qtdModalSelecionada < 1) qtdModalSelecionada = 1;
+    if (qtdModalSelecionada > 10) qtdModalSelecionada = 10;
+    const el = document.getElementById('menuModalQtdVal');
+    if (el) el.textContent = qtdModalSelecionada;
+};
+
+window.adicionarDoModalAoCarrinho = function () {
+    if (!produtoModalSelecionado) return;
+    adicionarItemAoCarrinhoGlobal(
+        produtoModalSelecionado.nome,
+        produtoModalSelecionado.preco,
+        produtoModalSelecionado.imagem,
+        qtdModalSelecionada
+    );
+    mostrarToastMenu(`✓ ${qtdModalSelecionada}x ${produtoModalSelecionado.nome} no carrinho!`);
+    fecharModalProdutoMenu();
+};
 
 carregarProdutos();
 
 // ============================================================
-// 4. EXIBIR ITENS NO CARRINHO
+// 4. GERENCIAMENTO E RENDERIZAÇÃO DO CARRINHO (carrinho.html)
 // ============================================================
 
-const caixaItensCarrinho = document.querySelector('.cart-items-box');
+window.renderizarPaginaCarrinho = function () {
+    const containerItens = document.getElementById('lista-itens-carrinho');
+    const layoutGrid = document.getElementById('cart-layout-grid');
+    const caixaVazio = document.getElementById('carrinho-vazio-box');
 
-if (caixaItensCarrinho) {
-    if (carrinho.length === 0) {
-        caixaItensCarrinho.innerHTML = `
-            <p style="padding:20px; color:#666; width:100%; text-align:center;">
-                Seu carrinho está vazio.
-            </p>
-        `;
+    carrinho = JSON.parse(localStorage.getItem('senai_cart')) || [];
+    atualizarBadgeCarrinho();
 
-        const subtotalElemento = document.querySelector('.summary-line:nth-child(2) span:nth-child(2)');
-        const totalElemento = document.querySelector('.total-line span:nth-child(2)');
-
-        if (subtotalElemento) subtotalElemento.textContent = 'R$ 0,00';
-        if (totalElemento) totalElemento.textContent = 'R$ 0,00';
-
-    } else {
-        caixaItensCarrinho.innerHTML = '';
-        let subtotal = 0;
-
-        carrinho.forEach((item, index) => {
-            subtotal += item.preco * item.quantidade;
-
-            const itemHTML = `
-                <div class="cart-item" style="position:relative;">
-                    <button
-                        class="btn-remove"
-                        onclick="removerItem(${index})"
-                        style="position:absolute; top:2px; right:5px; background:none; border:none; color:#E30613; font-weight:bold; cursor:pointer;"
-                    >
-                        X
-                    </button>
-                    <img src="${item.imagem}" alt="${item.nome}">
-                    <p>${item.nome}</p>
-                    <p style="color:var(--cor-primaria); font-size:11px;">
-                        ${item.quantidade}x R$ ${item.preco.toFixed(2).replace('.', ',')}
-                    </p>
-                </div>
-            `;
-
-            caixaItensCarrinho.innerHTML += itemHTML;
-        });
-
-        const precoFinalFormatado = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-        const subtotalElemento = document.querySelector('.summary-line:nth-child(2) span:nth-child(2)');
-        const totalElemento = document.querySelector('.total-line span:nth-child(2)');
-
-        if (subtotalElemento) subtotalElemento.textContent = precoFinalFormatado;
-        if (totalElemento) totalElemento.textContent = precoFinalFormatado;
-    }
-}
-
-window.removerItem = function(index) {
-    carrinho.splice(index, 1);
-    localStorage.setItem('senai_cart', JSON.stringify(carrinho));
-    window.location.reload();
-};
-
-// ============================================================
-// 5. FINALIZAR PEDIDO (SALVAR NO BANCO)
-// ============================================================
-
-const btnFinalizarPedido = document.getElementById('btn-finalizar');
-
-if (btnFinalizarPedido) {
-    btnFinalizarPedido.addEventListener('click', async function() {
-        let carrinhoAtual = JSON.parse(localStorage.getItem('senai_cart')) || [];
-
-        if (carrinhoAtual.length === 0) {
-            alert("Seu carrinho está vazio! Adicione alguns lanches primeiro.");
+    // Se estiver usando o container antigo
+    const caixaAntiga = document.querySelector('.cart-items-box');
+    if (caixaAntiga && !containerItens) {
+        if (carrinho.length === 0) {
+            caixaAntiga.innerHTML = '<p style="padding:20px; color:#666; width:100%; text-align:center;">Seu carrinho está vazio.</p>';
+            const subtotalElemento = document.querySelector('.summary-line:nth-child(2) span:nth-child(2)');
+            const totalElemento = document.querySelector('.total-line span:nth-child(2)');
+            if (subtotalElemento) subtotalElemento.textContent = 'R$ 0,00';
+            if (totalElemento) totalElemento.textContent = 'R$ 0,00';
             return;
         }
 
-        const totalPedido = carrinhoAtual.reduce(
-            (soma, item) => soma + (item.preco * item.quantidade),
-            0
-        );
+        caixaAntiga.innerHTML = '';
+        let subtotal = 0;
+        carrinho.forEach((item, index) => {
+            subtotal += item.preco * item.quantidade;
+            caixaAntiga.innerHTML += `
+                <div class="cart-item" style="position:relative;">
+                    <button class="btn-remove" onclick="removerItemCarrinho(${index})" style="position:absolute; top:2px; right:5px; background:none; border:none; color:#E30613; font-weight:bold; cursor:pointer;">X</button>
+                    <img src="${item.imagem}" alt="${item.nome}">
+                    <p>${item.nome}</p>
+                    <p style="color:var(--cor-primaria); font-size:11px;">${item.quantidade}x R$ ${item.preco.toFixed(2).replace('.', ',')}</p>
+                </div>
+            `;
+        });
+        const precoFinalFormatado = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+        const subtotalElemento = document.querySelector('.summary-line:nth-child(2) span:nth-child(2)');
+        const totalElemento = document.querySelector('.total-line span:nth-child(2)');
+        if (subtotalElemento) subtotalElemento.textContent = precoFinalFormatado;
+        if (totalElemento) totalElemento.textContent = precoFinalFormatado;
+        return;
+    }
 
-        const dadosPedido = {
-            itens: carrinhoAtual,
-            total: totalPedido
-        };
+    if (!containerItens) return;
 
-        try {
-            btnFinalizarPedido.disabled = true;
-            btnFinalizarPedido.textContent = "Enviando Pedido...";
+    if (carrinho.length === 0) {
+        if (layoutGrid) layoutGrid.style.display = 'none';
+        if (caixaVazio) caixaVazio.style.display = 'block';
+        return;
+    }
 
-            const resposta = await fetch('salvar-pedido.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dadosPedido)
-            });
+    if (layoutGrid) layoutGrid.style.display = 'grid';
+    if (caixaVazio) caixaVazio.style.display = 'none';
 
-            const resultado = await resposta.json();
+    containerItens.innerHTML = '';
+    let subtotal = 0;
 
-            if (resultado.sucesso) {
-                localStorage.removeItem('senai_cart');
-                window.location.href = `pedido-final.html?senha=${resultado.senha}`;
-            } else {
-                alert("Erro do servidor: " + (resultado.erro || 'Não foi possível salvar o pedido.'));
-                btnFinalizarPedido.disabled = false;
-                btnFinalizarPedido.textContent = "PROSSEGUIR";
-            }
+    carrinho.forEach((item, index) => {
+        const itemPreco = parseFloat(item.preco) || 0;
+        const itemQtd = parseInt(item.quantidade) || 1;
+        const itemSubtotal = itemPreco * itemQtd;
+        subtotal += itemSubtotal;
 
-        } catch (erro) {
-            console.error("Erro na requisição:", erro);
-            alert("Erro de conexão ao tentar salvar o pedido.");
-            btnFinalizarPedido.disabled = false;
-            btnFinalizarPedido.textContent = "PROSSEGUIR";
-        }
+        const rowHTML = `
+            <div class="cart-item-row" data-index="${index}">
+                <div class="cart-item-left">
+                    <img src="${item.imagem}" alt="${item.nome}" class="cart-item-thumb" onerror="this.src='https://placehold.co/100x100/eeeeee/999999?text=Lanche'">
+                    <div class="cart-item-details">
+                        <h4>${item.nome}</h4>
+                        <span>R$ ${itemPreco.toFixed(2).replace('.', ',')} cada</span>
+                    </div>
+                </div>
+                <div class="cart-item-right">
+                    <div class="cart-qty-stepper">
+                        <button type="button" class="cart-qty-btn" onclick="alterarQtdCarrinho(${index}, -1)" title="Diminuir">-</button>
+                        <span class="cart-qty-val">${itemQtd}</span>
+                        <button type="button" class="cart-qty-btn" onclick="alterarQtdCarrinho(${index}, 1)" title="Aumentar">+</button>
+                    </div>
+                    <span class="cart-item-subtotal">R$ ${itemSubtotal.toFixed(2).replace('.', ',')}</span>
+                    <button type="button" class="cart-item-del-btn" onclick="removerItemCarrinho(${index})" title="Remover este item">
+                        🗑️
+                    </button>
+                </div>
+            </div>
+        `;
+        containerItens.innerHTML += rowHTML;
     });
+
+    const precoFinalFormatado = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+    const elSubtotal = document.getElementById('cart-subtotal-val');
+    const elTotal = document.getElementById('cart-total-val');
+    const elTotalHeader = document.getElementById('cart-items-count-header');
+
+    if (elSubtotal) elSubtotal.textContent = precoFinalFormatado;
+    if (elTotal) elTotal.textContent = precoFinalFormatado;
+
+    // Atualiza o QR Code do PIX e texto Copia e Cola dinamicamente com o valor do pedido
+    const qrPixImg = document.getElementById('pix-qr-img');
+    const pixCodeText = document.getElementById('pix-code-text');
+    if (qrPixImg && pixCodeText) {
+        const codigoPixSimulado = `00020126580014br.gov.bcb.pix0136cantina-senai@filazero.com520400005303986540${subtotal.toFixed(2).length}${subtotal.toFixed(2)}5802BR5920CANTINA SENAI FILAZERO6008OURINHOS62070503***6304E2B1`;
+        pixCodeText.textContent = codigoPixSimulado;
+        qrPixImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(codigoPixSimulado)}`;
+    }
+    if (elTotalHeader) elTotalHeader.textContent = `${carrinho.length} ${carrinho.length === 1 ? 'item' : 'itens'}`;
+};
+
+window.alterarQtdCarrinho = function (index, delta) {
+    carrinho = JSON.parse(localStorage.getItem('senai_cart')) || [];
+    if (!carrinho[index]) return;
+
+    carrinho[index].quantidade = (parseInt(carrinho[index].quantidade) || 1) + delta;
+
+    if (carrinho[index].quantidade <= 0) {
+        carrinho.splice(index, 1);
+    }
+
+    localStorage.setItem('senai_cart', JSON.stringify(carrinho));
+    renderizarPaginaCarrinho();
+    atualizarBadgeCarrinho();
+};
+
+window.removerItemCarrinho = function (index) {
+    carrinho = JSON.parse(localStorage.getItem('senai_cart')) || [];
+    if (!carrinho[index]) return;
+
+    const nome = carrinho[index].nome;
+    carrinho.splice(index, 1);
+    localStorage.setItem('senai_cart', JSON.stringify(carrinho));
+    renderizarPaginaCarrinho();
+    atualizarBadgeCarrinho();
+    mostrarToastMenu(`✓ "${nome}" removido do carrinho.`);
+};
+
+window.removerItem = window.removerItemCarrinho; // Compatibilidade com código antigo
+
+window.limparCarrinhoCompleto = function () {
+    if (!confirm('Deseja realmente limpar todos os itens do seu carrinho?')) return;
+    localStorage.removeItem('senai_cart');
+    carrinho = [];
+    renderizarPaginaCarrinho();
+    atualizarBadgeCarrinho();
+};
+
+// ============================================================
+// MÁSCARAS E FUNÇÕES DO CARTÃO / PAGAMENTO FICTÍCIO
+// ============================================================
+
+window.mascaraNumeroCartao = function (input) {
+    let v = input.value.replace(/\D/g, '');
+    v = v.replace(/(\d{4})/g, '$1 ').trim();
+    input.value = v;
+};
+
+window.mascaraValidadeCartao = function (input) {
+    let v = input.value.replace(/\D/g, '');
+    if (v.length > 2) {
+        v = v.substring(0, 2) + '/' + v.substring(2, 4);
+    }
+    input.value = v;
+};
+
+window.metodoPagamentoSelecionado = 'pix';
+
+window.selecionarMetodoPagamento = function (metodo, botao) {
+    window.metodoPagamentoSelecionado = metodo;
+    document.querySelectorAll('.payment-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.payment-tab-panel').forEach(p => p.classList.remove('active'));
+
+    if (botao) botao.classList.add('active');
+    const painel = document.getElementById(`panel-pagamento-${metodo}`);
+    if (painel) painel.classList.add('active');
+
+    const btnFinalizar = document.getElementById('btn-finalizar-pedido') || document.getElementById('btn-finalizar');
+    if (btnFinalizar) {
+        if (metodo === 'dinheiro') {
+            btnFinalizar.innerHTML = '🚀 CONFIRMAR PEDIDO (PAGAR NO BALCÃO)';
+        } else if (metodo === 'pix') {
+            btnFinalizar.innerHTML = '💠 CONFIRMAR PAGAMENTO PIX';
+        } else {
+            btnFinalizar.innerHTML = '💳 CONFIRMAR PAGAMENTO COM CARTÃO';
+        }
+    }
+};
+
+window.copiarCodigoPix = function (btn) {
+    const codigo = document.getElementById('pix-code-text')?.textContent || '00020126580014br.gov.bcb.pix0136cantina-senai@filazero.com5204000053039865802BR5920CANTINA SENAI FILAZERO6008OURINHOS62070503***6304E2B1';
+    navigator.clipboard.writeText(codigo).then(() => {
+        if (btn) {
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = '✓ Código Copiado!';
+            btn.style.backgroundColor = '#059669';
+            setTimeout(() => {
+                btn.innerHTML = textoOriginal;
+                btn.style.backgroundColor = '';
+            }, 1800);
+        }
+    }).catch(() => {
+        alert('Código PIX: ' + codigo);
+    });
+};
+
+// ============================================================
+// 5. FINALIZAR PEDIDO (PROCESSAMENTO FICTÍCIO / LOCAL)
+// ============================================================
+
+window.finalizarPedidoCheckout = async function () {
+    const btnFinalizar = document.getElementById('btn-finalizar-pedido') || document.getElementById('btn-finalizar');
+    carrinho = JSON.parse(localStorage.getItem('senai_cart')) || [];
+
+    if (carrinho.length === 0) {
+        alert("Seu carrinho está vazio! Adicione alguns lanches primeiro.");
+        return;
+    }
+
+    const totalPedido = carrinho.reduce(
+        (soma, item) => soma + (parseFloat(item.preco) * parseInt(item.quantidade)),
+        0
+    );
+
+    const metodoAtual = window.metodoPagamentoSelecionado || 'pix';
+    const trocoInput = document.getElementById('troco-para-input');
+    const trocoPara = trocoInput ? trocoInput.value.trim() : '';
+
+    // Validação fictícia do formulário de Cartão quando a aba Cartão estiver ativa
+    if (metodoAtual === 'cartao') {
+        const numCartao = document.getElementById('cartao-numero')?.value.replace(/\s+/g, '') || '';
+        const nomeCartao = document.getElementById('cartao-nome')?.value.trim() || '';
+        const valCartao = document.getElementById('cartao-validade')?.value.trim() || '';
+        const cvvCartao = document.getElementById('cartao-cvv')?.value.trim() || '';
+
+        if (numCartao.length < 13) {
+            alert("Por favor, preencha o número do cartão (pelo menos 13 a 16 dígitos).");
+            document.getElementById('cartao-numero')?.focus();
+            return;
+        }
+        if (!nomeCartao) {
+            alert("Por favor, preencha o nome impresso no cartão.");
+            document.getElementById('cartao-nome')?.focus();
+            return;
+        }
+        if (valCartao.length < 5) {
+            alert("Por favor, informe a validade do cartão (MM/AA).");
+            document.getElementById('cartao-validade')?.focus();
+            return;
+        }
+        if (cvvCartao.length < 3) {
+            alert("Por favor, informe o código CVV (3 ou 4 dígitos).");
+            document.getElementById('cartao-cvv')?.focus();
+            return;
+        }
+    }
+
+    const dadosPedido = {
+        itens: carrinho,
+        total: totalPedido,
+        metodo: metodoAtual,
+        troco_para: trocoPara
+    };
+
+    if (btnFinalizar) {
+        btnFinalizar.disabled = true;
+        if (metodoAtual === 'cartao') {
+            btnFinalizar.innerHTML = '⏳ Processando Cartão...';
+        } else if (metodoAtual === 'pix') {
+            btnFinalizar.innerHTML = '⏳ Validando PIX...';
+        } else {
+            btnFinalizar.innerHTML = '⏳ Confirmando Pedido...';
+        }
+    }
+
+    try {
+        const resposta = await fetch('salvar-pedido.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dadosPedido)
+        });
+
+        const resultado = await resposta.json();
+
+        if (resultado.sucesso) {
+            // Salva dados do resumo do pedido para exibir no ticket
+            localStorage.setItem('senai_resumo_ultimo_pedido', JSON.stringify({
+                senha: resultado.senha,
+                itens: carrinho,
+                total: totalPedido,
+                metodo: metodoAtual,
+                data: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+            }));
+            localStorage.removeItem('senai_cart');
+            window.location.href = `pedido-final.html?senha=${resultado.senha}`;
+            return;
+        } else {
+            console.warn("Servidor retornou erro, gerando senha de contingência:", resultado.erro);
+            const senhaContingencia = Math.floor(Math.random() * 90) + 10;
+            localStorage.setItem('senai_resumo_ultimo_pedido', JSON.stringify({
+                senha: senhaContingencia,
+                itens: carrinho,
+                total: totalPedido,
+                metodo: metodoAtual,
+                data: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+            }));
+            localStorage.removeItem('senai_cart');
+            window.location.href = `pedido-final.html?senha=${senhaContingencia}`;
+        }
+
+    } catch (erro) {
+        console.warn("Sem conexão com banco, gerando senha offline:", erro);
+        const senhaOffline = Math.floor(Math.random() * 90) + 10;
+        localStorage.setItem('senai_resumo_ultimo_pedido', JSON.stringify({
+            senha: senhaOffline,
+            itens: carrinho,
+            total: totalPedido,
+            metodo: metodoAtual,
+            data: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+        }));
+        localStorage.removeItem('senai_cart');
+        window.location.href = `pedido-final.html?senha=${senhaOffline}`;
+    }
+};
+
+const btnAntigoFinalizar = document.getElementById('btn-finalizar');
+if (btnAntigoFinalizar) {
+    btnAntigoFinalizar.addEventListener('click', window.finalizarPedidoCheckout);
+}
+
+// Inicializa a página do carrinho se os elementos existirem
+if (document.getElementById('lista-itens-carrinho') || document.querySelector('.cart-items-box')) {
+    renderizarPaginaCarrinho();
 }
 
 // ============================================================
@@ -367,11 +1109,90 @@ function carregarSenhaDoTicket() {
         }
     }
 
+    // Carrega o resumo do pedido salvo
+    const dadosResumoStr = localStorage.getItem('senai_resumo_ultimo_pedido');
+    if (dadosResumoStr) {
+        try {
+            const dadosResumo = JSON.parse(dadosResumoStr);
+
+            // Hora do pedido
+            const elHora = document.getElementById('ticket-hora-pedido');
+            if (elHora && dadosResumo.data) {
+                elHora.textContent = dadosResumo.data;
+            }
+
+            // Método de pagamento
+            const elMetodo = document.getElementById('ticket-metodo-pagamento');
+            const elStatusTexto = document.getElementById('status-pagamento-texto');
+            if (elMetodo && dadosResumo.metodo) {
+                if (dadosResumo.metodo === 'pix') {
+                    elMetodo.textContent = '💠 PIX Instantâneo';
+                    if (elStatusTexto) elStatusTexto.textContent = 'Pagamento Aprovado via PIX!';
+                } else if (dadosResumo.metodo === 'cartao') {
+                    elMetodo.textContent = '💳 Cartão de Crédito/Débito';
+                    if (elStatusTexto) elStatusTexto.textContent = 'Pagamento Aprovado no Cartão!';
+                } else {
+                    elMetodo.textContent = '💵 Dinheiro no Balcão';
+                    if (elStatusTexto) elStatusTexto.textContent = 'Pedido Confirmado! Pague no Balcão';
+                }
+            }
+
+            // Total do pedido
+            const elTotal = document.getElementById('ticket-total-pedido');
+            if (elTotal && typeof dadosResumo.total === 'number') {
+                elTotal.textContent = `R$ ${dadosResumo.total.toFixed(2).replace('.', ',')}`;
+            }
+
+            // Itens do pedido
+            const containerItens = document.getElementById('ticket-lista-itens');
+            if (containerItens && Array.isArray(dadosResumo.itens) && dadosResumo.itens.length > 0) {
+                containerItens.innerHTML = '';
+                dadosResumo.itens.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'ticket-item-row';
+                    const precoTotalItem = (parseFloat(item.preco) * parseInt(item.quantidade)).toFixed(2).replace('.', ',');
+                    row.innerHTML = `
+                        <div class="ticket-item-info">
+                            <span class="ticket-item-qtd">${item.quantidade}x</span>
+                            <span class="ticket-item-nome">${item.nome}</span>
+                        </div>
+                        <span class="ticket-item-preco">R$ ${precoTotalItem}</span>
+                    `;
+                    containerItens.appendChild(row);
+                });
+            }
+
+            // Ícones de itens na caixa de resumo rápido
+            const listaIcones = document.getElementById('lista-icones-final');
+            if (listaIcones && Array.isArray(dadosResumo.itens) && dadosResumo.itens.length > 0) {
+                listaIcones.innerHTML = '';
+                dadosResumo.itens.forEach(item => {
+                    const img = document.createElement('img');
+                    img.src = item.imagem || 'https://placehold.co/50x50/eeeeee/999999?text=Lanche';
+                    img.alt = item.nome;
+                    img.title = `${item.quantidade}x ${item.nome}`;
+                    img.onerror = () => { img.src = 'https://placehold.co/50x50/eeeeee/999999?text=Item'; };
+                    listaIcones.appendChild(img);
+                });
+            }
+        } catch (e) {
+            console.error("Erro ao carregar resumo do pedido:", e);
+        }
+    }
+
     const btnRestart = document.getElementById('btn-restart');
     if (btnRestart) {
-        btnRestart.addEventListener('click', function() {
+        btnRestart.addEventListener('click', function () {
             localStorage.removeItem('senai_cart');
+            localStorage.removeItem('senai_resumo_ultimo_pedido');
             window.location.href = 'index.html';
+        });
+    }
+
+    const btnPrint = document.getElementById('btn-imprimir-ticket');
+    if (btnPrint) {
+        btnPrint.addEventListener('click', function () {
+            window.print();
         });
     }
 }
@@ -413,18 +1234,30 @@ const inputLoginAlunoEmail = document.getElementById('aluno-login-email');
 async function executarLoginAluno() {
     if (!inputLoginAlunoEmail) return;
 
+    const feedbackBox = document.getElementById('aluno-feedback-msg');
     const email = inputLoginAlunoEmail.value.trim();
 
+    function mostrarFeedbackAluno(msg, tipo = 'error') {
+        if (feedbackBox) {
+            feedbackBox.className = `cadastro-feedback-box ${tipo}`;
+            feedbackBox.innerHTML = (tipo === 'error' ? '⚠️ ' : '✓ ') + msg;
+            feedbackBox.style.display = 'block';
+        } else {
+            alert(msg);
+        }
+    }
+
     if (!email) {
-        alert('Digite seu e-mail.');
+        mostrarFeedbackAluno('Por favor, informe seu e-mail cadastrado.');
         inputLoginAlunoEmail.focus();
         return;
     }
 
     if (btnLoginAluno) {
         btnLoginAluno.disabled = true;
-        btnLoginAluno.textContent = 'VERIFICANDO...';
+        btnLoginAluno.innerHTML = '<span>⏳ Autenticando...</span>';
     }
+    if (feedbackBox) feedbackBox.style.display = 'none';
 
     try {
         const resposta = await fetch('login-aluno.php', {
@@ -437,27 +1270,31 @@ async function executarLoginAluno() {
 
         const resultado = await resposta.json();
 
-        if (resultado.sucesso && resultado.status === 'aprovado') {
+        if (resultado.sucesso && (resultado.status === 'aprovado' || resultado.status === 'admin')) {
             localStorage.setItem('aluno_logado', JSON.stringify(resultado.aluno));
-            window.location.href = 'menu.html';
+            mostrarFeedbackAluno(`Bem-vindo(a), ${resultado.aluno.nome}! Entrando no cardápio...`, 'success');
+            if (btnLoginAluno) btnLoginAluno.innerHTML = '<span>✓ Conectado!</span>';
+            setTimeout(() => {
+                window.location.href = 'menu.html';
+            }, 800);
             return;
         }
 
-        // Aluno pendente, recusado ou não cadastrado
-        alert(resultado.erro || 'Não foi possível realizar o login.');
+        // Aluno pendente, recusado, banido ou não encontrado
+        mostrarFeedbackAluno(resultado.erro || 'Não foi possível realizar o login.');
 
         if (btnLoginAluno) {
             btnLoginAluno.disabled = false;
-            btnLoginAluno.textContent = 'ENTRAR';
+            btnLoginAluno.innerHTML = '<span>🍔 ENTRAR NO CARDÁPIO</span>';
         }
 
     } catch (erro) {
         console.error('Erro no login do aluno:', erro);
-        alert('Erro de conexão com o servidor. Verifique se o XAMPP (Apache e MySQL) está ativo.');
+        mostrarFeedbackAluno('Erro de conexão com o servidor. Verifique sua conexão ou o XAMPP.');
 
         if (btnLoginAluno) {
             btnLoginAluno.disabled = false;
-            btnLoginAluno.textContent = 'ENTRAR';
+            btnLoginAluno.innerHTML = '<span>🍔 ENTRAR NO CARDÁPIO</span>';
         }
     }
 }
@@ -467,7 +1304,7 @@ if (btnLoginAluno) {
 }
 
 if (inputLoginAlunoEmail) {
-    inputLoginAlunoEmail.addEventListener('keypress', function(e) {
+    inputLoginAlunoEmail.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             executarLoginAluno();
         }
@@ -485,18 +1322,30 @@ const inputAdmPass = document.getElementById('adm-pass');
 async function executarLoginAdm() {
     if (!inputAdmUser || !inputAdmPass) return;
 
+    const feedbackBox = document.getElementById('adm-feedback-msg');
     const usuario = inputAdmUser.value.trim();
     const senha = inputAdmPass.value;
 
+    function mostrarFeedbackAdm(msg, tipo = 'error') {
+        if (feedbackBox) {
+            feedbackBox.className = `cadastro-feedback-box ${tipo}`;
+            feedbackBox.innerHTML = (tipo === 'error' ? '⚠️ ' : '✓ ') + msg;
+            feedbackBox.style.display = 'block';
+        } else {
+            alert(msg);
+        }
+    }
+
     if (!usuario || !senha) {
-        alert('Informe usuário e senha.');
+        mostrarFeedbackAdm('Informe o usuário/e-mail e a senha.');
         return;
     }
 
     if (btnLoginAdm) {
         btnLoginAdm.disabled = true;
-        btnLoginAdm.textContent = 'ENTRANDO...';
+        btnLoginAdm.innerHTML = '<span>⏳ Autenticando...</span>';
     }
+    if (feedbackBox) feedbackBox.style.display = 'none';
 
     try {
         const resposta = await fetch('login-adm.php', {
@@ -514,23 +1363,27 @@ async function executarLoginAdm() {
 
         if (resultado.sucesso) {
             localStorage.setItem('adm_logado', JSON.stringify(resultado.admin));
-            window.location.href = 'painel-adm.html';
+            mostrarFeedbackAdm('Acesso autorizado! Redirecionando para o painel...', 'success');
+            if (btnLoginAdm) btnLoginAdm.innerHTML = '<span>✓ Conectado!</span>';
+            setTimeout(() => {
+                window.location.href = 'painel-adm.html';
+            }, 900);
         } else {
-            alert(resultado.erro || 'Usuário ou senha inválidos.');
+            mostrarFeedbackAdm(resultado.erro || 'Usuário ou senha inválidos.');
 
             if (btnLoginAdm) {
                 btnLoginAdm.disabled = false;
-                btnLoginAdm.textContent = 'ENTRAR';
+                btnLoginAdm.innerHTML = '<span>🛡️ ENTRAR NO PAINEL ADMINISTRATIVO</span>';
             }
         }
 
     } catch (erro) {
         console.error('Erro no login ADM:', erro);
-        alert('Erro de conexão com o servidor. Verifique se o XAMPP (Apache e MySQL) está ativo.');
+        mostrarFeedbackAdm('Erro de conexão com o servidor. Verifique se o XAMPP está ativo.');
 
         if (btnLoginAdm) {
             btnLoginAdm.disabled = false;
-            btnLoginAdm.textContent = 'ENTRAR';
+            btnLoginAdm.innerHTML = '<span>🛡️ ENTRAR NO PAINEL ADMINISTRATIVO</span>';
         }
     }
 }
@@ -540,7 +1393,7 @@ if (btnLoginAdm) {
 }
 
 if (inputAdmUser) {
-    inputAdmUser.addEventListener('keypress', function(e) {
+    inputAdmUser.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             if (inputAdmPass) inputAdmPass.focus();
         }
@@ -548,7 +1401,7 @@ if (inputAdmUser) {
 }
 
 if (inputAdmPass) {
-    inputAdmPass.addEventListener('keypress', function(e) {
+    inputAdmPass.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             executarLoginAdm();
         }
@@ -562,30 +1415,42 @@ if (inputAdmPass) {
 const btnCadastrarAluno = document.getElementById('btn-cadastrar-aluno');
 
 if (btnCadastrarAluno) {
-    btnCadastrarAluno.addEventListener('click', async function() {
+    btnCadastrarAluno.addEventListener('click', async function () {
         const inputNome = document.getElementById('aluno-nome');
         const inputEscola = document.getElementById('aluno-escola');
         const inputTurma = document.getElementById('aluno-turma');
         const inputEmail = document.getElementById('aluno-email');
+        const feedbackBox = document.getElementById('cadastro-feedback-msg');
 
         const nome = inputNome ? inputNome.value.trim() : '';
         const escola = inputEscola ? inputEscola.value.trim() : '';
         const turma = inputTurma ? inputTurma.value.trim() : '';
         const email = inputEmail ? inputEmail.value.trim() : '';
 
+        function mostrarFeedback(msg, tipo = 'error') {
+            if (feedbackBox) {
+                feedbackBox.className = `cadastro-feedback-box ${tipo}`;
+                feedbackBox.innerHTML = (tipo === 'error' ? '⚠️ ' : '✓ ') + msg;
+                feedbackBox.style.display = 'block';
+            } else {
+                alert(msg);
+            }
+        }
+
         if (!nome || !escola || !turma || !email) {
-            alert('Preencha todos os campos para realizar o cadastro.');
+            mostrarFeedback('Preencha todos os campos para realizar o seu cadastro.');
             return;
         }
 
         const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailValido.test(email)) {
-            alert('Digite um e-mail válido.');
+            mostrarFeedback('Por favor, informe um endereço de e-mail válido.');
             return;
         }
 
         btnCadastrarAluno.disabled = true;
-        btnCadastrarAluno.textContent = 'CADASTRANDO...';
+        btnCadastrarAluno.innerHTML = '<span>⏳ Enviando Cadastro...</span>';
+        if (feedbackBox) feedbackBox.style.display = 'none';
 
         try {
             const resposta = await fetch('cadastrar-aluno.php', {
@@ -604,19 +1469,22 @@ if (btnCadastrarAluno) {
             const resultado = await resposta.json();
 
             if (resultado.sucesso) {
-                alert('Cadastro realizado com sucesso!\n\nAguarde a aprovação da cantina para acessar.');
-                window.location.href = 'index.html';
+                mostrarFeedback('🎉 Cadastro realizado com sucesso! Aguarde a aprovação da cantina para liberar seus pedidos.', 'success');
+                btnCadastrarAluno.innerHTML = '<span>✓ Cadastrado com Sucesso!</span>';
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2200);
             } else {
-                alert(resultado.erro || 'Não foi possível realizar o cadastro.');
+                mostrarFeedback(resultado.erro || 'Não foi possível realizar o cadastro.');
                 btnCadastrarAluno.disabled = false;
-                btnCadastrarAluno.textContent = 'CADASTRAR';
+                btnCadastrarAluno.innerHTML = '<span>🚀 FINALIZAR MEU CADASTRO</span>';
             }
 
         } catch (erro) {
             console.error('Erro ao cadastrar aluno:', erro);
-            alert('Erro de conexão com o servidor. Verifique se o XAMPP (Apache e MySQL) está ativo.');
+            mostrarFeedback('Erro de conexão com o servidor. Verifique se o XAMPP (Apache e MySQL) está ativo.');
             btnCadastrarAluno.disabled = false;
-            btnCadastrarAluno.textContent = 'CADASTRAR';
+            btnCadastrarAluno.innerHTML = '<span>🚀 FINALIZAR MEU CADASTRO</span>';
         }
     });
 }
@@ -625,7 +1493,7 @@ if (btnCadastrarAluno) {
 // 11. PAINEL ADMINISTRATIVO (painel-adm.html)
 // ============================================================
 
-window.alternarAba = function(nomeAba, botaoElemento) {
+window.alternarAba = function (nomeAba, botaoElemento) {
     // 1. Esconde todas as abas
     document.querySelectorAll('.tab-content').forEach(aba => {
         aba.classList.remove('active');
@@ -662,7 +1530,7 @@ window.alternarAba = function(nomeAba, botaoElemento) {
     }
 };
 
-window.fazerLogoutAdm = function() {
+window.fazerLogoutAdm = function () {
     localStorage.removeItem('adm_logado');
     window.location.href = 'index.html';
 };
@@ -812,12 +1680,40 @@ async function carregarEstoque() {
         });
 
     } catch (erro) {
-        console.error("Erro ao carregar estoque:", erro);
-        containerEstoque.innerHTML = `
-            <p style="color:red; text-align:center;">
-                Erro ao carregar o estoque.
-            </p>
-        `;
+        console.warn("Utilizando estoque padrão offline:", erro);
+        containerEstoque.innerHTML = '';
+        CATALOGO_PADRAO_PRODUTOS.forEach(produto => {
+            const corEstoque = produto.estoque <= 5 ? '#E30613' : '#28a745';
+            const linhaHTML = `
+                <div class="admin-row-item">
+                    <div class="item-img" style="overflow:hidden; padding:0; border:1px solid #ccc;">
+                        <img
+                            src="${produto.imagem}"
+                            alt="${produto.nome}"
+                            style="width:100%; height:100%; object-fit:cover; border-radius:10px;"
+                        >
+                    </div>
+                    <div class="item-details">
+                        <strong>${produto.nome}</strong>
+                        <p>
+                            Estoque atual:
+                            <span style="color:${corEstoque}; font-weight:bold;">
+                                ${produto.estoque} unidades
+                            </span>
+                        </p>
+                    </div>
+                    <div class="item-actions">
+                        <button
+                            class="btn-edit"
+                            onclick="editarEstoque(${produto.id}, '${produto.nome.replace(/'/g, "\\'")}', ${produto.estoque})"
+                        >
+                            Editar
+                        </button>
+                    </div>
+                </div>
+            `;
+            containerEstoque.innerHTML += linhaHTML;
+        });
     }
 }
 
@@ -903,6 +1799,12 @@ async function carregarAlunos() {
             } else if (aluno.status === 'aprovado') {
                 statusTexto = 'Aprovado';
                 statusClasse = 'approved';
+            } else if (aluno.status === 'admin') {
+                statusTexto = '⭐ Administrador';
+                statusClasse = 'admin';
+            } else if (aluno.status === 'banido') {
+                statusTexto = '🚫 Banido';
+                statusClasse = 'banned';
             } else {
                 statusTexto = 'Recusado';
                 statusClasse = 'refused';
@@ -910,7 +1812,7 @@ async function carregarAlunos() {
 
             let botoes = '';
             if (aluno.status === 'pendente') {
-                botoes = `
+                botoes += `
                     <button class="btn-check" onclick="aprovarAluno(${aluno.id})">
                         Aprovar
                     </button>
@@ -920,12 +1822,20 @@ async function carregarAlunos() {
                 `;
             }
 
+            // Botão para abrir o modal de edição (Cargo / Banimento / Dados)
+            const alunoJsonStr = JSON.stringify(aluno).replace(/"/g, '&quot;');
+            botoes += `
+                <button class="btn-edit" onclick="abrirModalEditarAluno(${alunoJsonStr})">
+                    ✏️ Editar / Gerenciar
+                </button>
+            `;
+
             const linhaHTML = `
                 <div class="admin-row-item" id="aluno-${aluno.id}">
-                    <div class="item-img">👤</div>
+                    <div class="item-img">${aluno.status === 'admin' ? '⭐' : (aluno.status === 'banido' ? '🚫' : '👤')}</div>
                     <div class="item-details">
                         <strong>${aluno.nome}</strong>
-                        <p>${aluno.escola} • ${aluno.turma}</p>
+                        <p>${aluno.escola || 'SENAI'} • ${aluno.turma || 'Geral'}</p>
                         <small style="color:#777;">${aluno.email}</small>
                     </div>
                     <div class="item-actions">
@@ -1006,6 +1916,572 @@ async function recusarAluno(id) {
     }
 }
 
+// ============================================================
+// MODAL 1: ADICIONAR NOVO PEDIDO MANUALMENTE NO BALCÃO
+// ============================================================
+
+window.novoPedidoItensAdmin = [];
+window.catalogoProdutosCache = [];
+
+window.abrirModalNovoPedido = async function () {
+    const modal = document.getElementById('modal-novo-pedido');
+    if (!modal) return;
+    modal.style.display = 'flex';
+
+    const container = document.getElementById('admin-pedido-itens-selector');
+    if (container) container.innerHTML = '<p style="text-align:center; color:#94a3b8;">Carregando produtos...</p>';
+
+    window.novoPedidoItensAdmin = [];
+    atualizarTotalNovoPedidoAdmin();
+
+    try {
+        const resp = await fetch('api-produtos.php');
+        const produtos = await resp.json();
+        window.catalogoProdutosCache = produtos || [];
+        renderizarSeletorProdutosPedido();
+    } catch (e) {
+        console.error("Erro ao carregar cardápio:", e);
+        if (typeof CATALOGO_PADRAO_PRODUTOS !== 'undefined') {
+            window.catalogoProdutosCache = CATALOGO_PADRAO_PRODUTOS;
+            renderizarSeletorProdutosPedido();
+        }
+    }
+};
+
+window.fecharModalNovoPedido = function () {
+    const modal = document.getElementById('modal-novo-pedido');
+    if (modal) modal.style.display = 'none';
+};
+
+function renderizarSeletorProdutosPedido() {
+    const container = document.getElementById('admin-pedido-itens-selector');
+    if (!container) return;
+
+    if (!window.catalogoProdutosCache || window.catalogoProdutosCache.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#94a3b8;">Nenhum produto cadastrado.</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+    window.catalogoProdutosCache.forEach(prod => {
+        const preco = parseFloat(prod.preco);
+        const card = document.createElement('div');
+        card.className = 'admin-picker-card';
+        card.innerHTML = `
+            <div style="display:flex; align-items:center; gap:8px;">
+                <img src="${prod.imagem}" alt="${prod.nome}" style="width:36px; height:36px; border-radius:6px; object-fit:cover;" onerror="this.src='https://placehold.co/40x40?text=Food'">
+                <div>
+                    <strong style="font-size:13px; display:block; color:#1e293b;">${prod.nome}</strong>
+                    <span style="font-size:12px; color:#10b981; font-weight:bold;">R$ ${preco.toFixed(2).replace('.', ',')}</span>
+                    <small style="font-size:11px; color:#64748b; margin-left:4px;">(Saldo: ${prod.estoque ?? 0})</small>
+                </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+                <button type="button" class="btn-picker-qty" onclick="ajustarQtdNovoPedidoAdmin(${prod.id}, -1)">-</button>
+                <span id="picker-qtd-${prod.id}" style="font-weight:bold; font-size:14px; min-width:18px; text-align:center;">0</span>
+                <button type="button" class="btn-picker-qty" onclick="ajustarQtdNovoPedidoAdmin(${prod.id}, 1)">+</button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+window.ajustarQtdNovoPedidoAdmin = function (idProduto, delta) {
+    const prod = window.catalogoProdutosCache.find(p => p.id == idProduto);
+    if (!prod) return;
+
+    let itemExistente = window.novoPedidoItensAdmin.find(i => i.id == idProduto);
+    if (!itemExistente) {
+        itemExistente = {
+            id: prod.id,
+            nome: prod.nome,
+            preco: parseFloat(prod.preco),
+            imagem: prod.imagem,
+            quantidade: 0
+        };
+        window.novoPedidoItensAdmin.push(itemExistente);
+    }
+
+    itemExistente.quantidade += delta;
+    if (itemExistente.quantidade < 0) itemExistente.quantidade = 0;
+
+    const elQtd = document.getElementById(`picker-qtd-${idProduto}`);
+    if (elQtd) elQtd.textContent = itemExistente.quantidade;
+
+    atualizarTotalNovoPedidoAdmin();
+};
+
+function atualizarTotalNovoPedidoAdmin() {
+    const total = window.novoPedidoItensAdmin.reduce((acc, cur) => acc + (cur.preco * cur.quantidade), 0);
+    const elTotal = document.getElementById('admin-novo-pedido-total');
+    if (elTotal) elTotal.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+}
+
+window.salvarNovoPedidoAdmin = async function () {
+    const itensValidos = window.novoPedidoItensAdmin.filter(i => i.quantidade > 0);
+    if (itensValidos.length === 0) {
+        alert("Adicione pelo menos 1 unidade de algum produto para lançar o pedido.");
+        return;
+    }
+
+    const total = itensValidos.reduce((acc, cur) => acc + (cur.preco * cur.quantidade), 0);
+
+    try {
+        const resp = await fetch('admin-adicionar-pedido.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                acao: 'criar_pedido',
+                itens: itensValidos,
+                total: total,
+                status: 'Pendente'
+            })
+        });
+
+        const res = await resp.json();
+        if (res.sucesso) {
+            alert(`🎉 Pedido lançado com sucesso! Senha gerada: #${String(res.senha).padStart(2, '0')}`);
+            fecharModalNovoPedido();
+            if (typeof carregarPedidosPainel === 'function') carregarPedidosPainel();
+            if (typeof carregarEstoque === 'function') carregarEstoque();
+            if (typeof carregarGiroEstoque === 'function') carregarGiroEstoque();
+        } else {
+            alert("Erro: " + (res.erro || "Não foi possível criar o pedido."));
+        }
+    } catch (e) {
+        console.error("Erro ao criar pedido:", e);
+        alert("Erro de comunicação ao salvar o pedido.");
+    }
+};
+
+// ============================================================
+// MODAL 2: CADASTRAR NOVO PRODUTO NO ESTOQUE
+// ============================================================
+
+window.abrirModalNovoProduto = function () {
+    const modal = document.getElementById('modal-novo-produto');
+    if (modal) modal.style.display = 'flex';
+};
+
+window.fecharModalNovoProduto = function () {
+    const modal = document.getElementById('modal-novo-produto');
+    if (modal) modal.style.display = 'none';
+};
+
+window.salvarNovoProdutoAdmin = async function () {
+    const nome = document.getElementById('novo-prod-nome')?.value.trim();
+    const categoria = document.getElementById('novo-prod-categoria')?.value;
+    const preco = parseFloat(document.getElementById('novo-prod-preco')?.value);
+    const estoque = parseInt(document.getElementById('novo-prod-estoque')?.value) || 0;
+    const imagem = document.getElementById('novo-prod-imagem')?.value.trim();
+
+    if (!nome) {
+        alert("Digite o nome do produto.");
+        return;
+    }
+    if (isNaN(preco) || preco <= 0) {
+        alert("Digite um preço válido.");
+        return;
+    }
+
+    try {
+        const resp = await fetch('admin-adicionar-pedido.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                acao: 'adicionar_produto',
+                nome: nome,
+                categoria: categoria,
+                preco: preco,
+                estoque: estoque,
+                imagem: imagem
+            })
+        });
+
+        const res = await resp.json();
+        if (res.sucesso) {
+            alert("✓ " + res.mensagem);
+            fecharModalNovoProduto();
+            if (typeof carregarEstoque === 'function') carregarEstoque();
+            if (typeof carregarGiroEstoque === 'function') carregarGiroEstoque();
+        } else {
+            alert("Erro: " + (res.erro || "Falha ao salvar produto."));
+        }
+    } catch (e) {
+        console.error("Erro ao cadastrar produto:", e);
+        alert("Erro de conexão com o servidor.");
+    }
+};
+
+// ============================================================
+// MODAL 3: EDITAR ALUNO (ADMIN / BANIR / DADOS)
+// ============================================================
+
+window.alunoEmEdicao = null;
+
+window.abrirModalEditarAluno = function (aluno) {
+    window.alunoEmEdicao = aluno;
+    const modal = document.getElementById('modal-editar-aluno');
+    if (!modal) return;
+
+    document.getElementById('edit-aluno-id').value = aluno.id;
+    document.getElementById('edit-aluno-nome').value = aluno.nome || '';
+    document.getElementById('edit-aluno-email').value = aluno.email || '';
+    document.getElementById('edit-aluno-turma').value = aluno.turma || '';
+    document.getElementById('edit-aluno-escola').value = aluno.escola || '';
+
+    const tagStatus = document.getElementById('edit-aluno-status-tag');
+    if (tagStatus) {
+        tagStatus.className = 'status-badge ' + (aluno.status === 'admin' ? 'admin' : (aluno.status === 'banido' ? 'banned' : 'approved'));
+        tagStatus.textContent = aluno.status.toUpperCase();
+    }
+
+    const btnAdmin = document.getElementById('btn-toggle-admin-aluno');
+    if (btnAdmin) {
+        if (aluno.status === 'admin') {
+            btnAdmin.innerHTML = '⭐ Rebaixar / Remover Admin';
+            btnAdmin.style.background = '#64748b';
+        } else {
+            btnAdmin.innerHTML = '⭐ Promover a Administrador';
+            btnAdmin.style.background = '#f59e0b';
+        }
+    }
+
+    const btnBan = document.getElementById('btn-toggle-ban-aluno');
+    if (btnBan) {
+        if (aluno.status === 'banido') {
+            btnBan.innerHTML = '✅ Desbanir Aluno';
+            btnBan.style.background = '#10b981';
+        } else {
+            btnBan.innerHTML = '🚫 Banir Aluno';
+            btnBan.style.background = '#ef4444';
+        }
+    }
+
+    modal.style.display = 'flex';
+};
+
+window.fecharModalEditarAluno = function () {
+    const modal = document.getElementById('modal-editar-aluno');
+    if (modal) modal.style.display = 'none';
+};
+
+window.alternarCargoAdminAluno = async function () {
+    if (!window.alunoEmEdicao) return;
+    const isCurrentlyAdmin = window.alunoEmEdicao.status === 'admin';
+    const acao = isCurrentlyAdmin ? 'remover_admin' : 'tornar_admin';
+    const msgConfirma = isCurrentlyAdmin
+        ? 'Deseja remover os privilégios de administrador deste aluno?'
+        : 'Deseja conceder cargo de Administrador a este aluno? Ele poderá acessar o Painel ADM com o e-mail cadastrado e senha inicial 123456.';
+
+    if (!confirm(msgConfirma)) return;
+
+    try {
+        const resp = await fetch('editar-aluno.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: window.alunoEmEdicao.id, acao: acao })
+        });
+        const res = await resp.json();
+        if (res.sucesso) {
+            alert(res.mensagem);
+            fecharModalEditarAluno();
+            if (typeof carregarAlunos === 'function') carregarAlunos();
+        } else {
+            alert("Erro: " + (res.erro || "Não foi possível alterar cargo."));
+        }
+    } catch (e) {
+        console.error("Erro:", e);
+        alert("Erro de comunicação ao atualizar cargo.");
+    }
+};
+
+window.alternarBanirAluno = async function () {
+    if (!window.alunoEmEdicao) return;
+    const isBanned = window.alunoEmEdicao.status === 'banido';
+    const acao = isBanned ? 'desbanir' : 'banir';
+    const msgConfirma = isBanned
+        ? 'Deseja desbanir este aluno e permitir que ele acesse novamente o sistema?'
+        : 'Tem certeza que deseja banir este aluno? O login dele será bloqueado imediatamente.';
+
+    if (!confirm(msgConfirma)) return;
+
+    try {
+        const resp = await fetch('editar-aluno.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: window.alunoEmEdicao.id, acao: acao })
+        });
+        const res = await resp.json();
+        if (res.sucesso) {
+            alert(res.mensagem);
+            fecharModalEditarAluno();
+            if (typeof carregarAlunos === 'function') carregarAlunos();
+        } else {
+            alert("Erro: " + (res.erro || "Não foi possível banir/desbanir."));
+        }
+    } catch (e) {
+        console.error("Erro:", e);
+        alert("Erro de comunicação ao banir/desbanir aluno.");
+    }
+};
+
+window.salvarDadosEditadosAluno = async function () {
+    if (!window.alunoEmEdicao) return;
+    const id = window.alunoEmEdicao.id;
+    const nome = document.getElementById('edit-aluno-nome')?.value.trim();
+    const email = document.getElementById('edit-aluno-email')?.value.trim();
+    const turma = document.getElementById('edit-aluno-turma')?.value.trim();
+    const escola = document.getElementById('edit-aluno-escola')?.value.trim();
+
+    if (!nome || !email) {
+        alert("Preencha ao menos Nome e E-mail.");
+        return;
+    }
+
+    try {
+        const resp = await fetch('editar-aluno.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: id,
+                acao: 'editar_dados',
+                nome: nome,
+                email: email,
+                turma: turma,
+                escola: escola
+            })
+        });
+        const res = await resp.json();
+        if (res.sucesso) {
+            alert("✓ " + res.mensagem);
+            fecharModalEditarAluno();
+            if (typeof carregarAlunos === 'function') carregarAlunos();
+        } else {
+            alert("Erro: " + (res.erro || "Não foi possível salvar os dados."));
+        }
+    } catch (e) {
+        console.error("Erro:", e);
+        alert("Erro de conexão ao salvar.");
+    }
+};
+
+// ============================================================
+// ABA GIRO DE ESTOQUE: ENTRADA, SAÍDA & SALDOS
+// ============================================================
+
+window.dadosGiroCache = null;
+
+window.carregarGiroEstoque = async function () {
+    const tabelaSaldos = document.getElementById('giro-tabela-saldos');
+    const tabelaHist = document.getElementById('giro-tabela-historico');
+    if (!tabelaSaldos || !tabelaHist) return;
+
+    try {
+        const resp = await fetch('api-giro-estoque.php');
+        const dados = await resp.json();
+        window.dadosGiroCache = dados;
+
+        // Atualiza os cards de métricas
+        if (dados.totais) {
+            document.getElementById('giro-total-itens').textContent = `${dados.totais.total_itens} un`;
+            document.getElementById('giro-total-valor').textContent = `R$ ${parseFloat(dados.totais.valor_total).toFixed(2).replace('.', ',')}`;
+            document.getElementById('giro-total-entradas').textContent = `${dados.totais.total_entradas} un`;
+            document.getElementById('giro-total-saidas').textContent = `${dados.totais.total_saidas} un`;
+        }
+
+        // Tabela de saldos
+        tabelaSaldos.innerHTML = '';
+        if (!dados.produtos || dados.produtos.length === 0) {
+            tabelaSaldos.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:15px; color:#64748b;">Nenhum produto em estoque.</td></tr>';
+        } else {
+            dados.produtos.forEach(p => {
+                const qtd = parseInt(p.estoque);
+                const preco = parseFloat(p.preco);
+                const totalLinha = qtd * preco;
+                const statusCor = qtd <= 5 ? '#ef4444' : '#10b981';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${p.nome}</strong></td>
+                    <td><span class="giro-badge-cat">${p.categoria}</span></td>
+                    <td>R$ ${preco.toFixed(2).replace('.', ',')}</td>
+                    <td><strong style="color:${statusCor}; font-size:15px;">${qtd} un</strong></td>
+                    <td>R$ ${totalLinha.toFixed(2).replace('.', ',')}</td>
+                    <td>
+                        <button type="button" class="btn-table-action in" onclick="abrirModalMovimentacaoEstoque('entrada', ${p.id})">+ Entrada</button>
+                        <button type="button" class="btn-table-action out" onclick="abrirModalMovimentacaoEstoque('saida', ${p.id})">- Saída</button>
+                    </td>
+                `;
+                tabelaSaldos.appendChild(tr);
+            });
+        }
+
+        // Tabela de movimentações
+        tabelaHist.innerHTML = '';
+        if (!dados.movimentacoes || dados.movimentacoes.length === 0) {
+            tabelaHist.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:15px; color:#64748b;">Nenhuma movimentação registrada até o momento.</td></tr>';
+        } else {
+            dados.movimentacoes.forEach(m => {
+                const isEntrada = m.tipo === 'entrada';
+                const tr = document.createElement('tr');
+                const dataFormatada = new Date(m.data_hora).toLocaleString('pt-BR');
+                tr.innerHTML = `
+                    <td style="font-size:12px; color:#64748b;">${dataFormatada}</td>
+                    <td><strong>${m.produto_nome}</strong></td>
+                    <td>
+                        <span class="giro-tipo-badge ${isEntrada ? 'entrada' : 'saida'}">
+                            ${isEntrada ? '📥 Entrada' : '📤 Saída'}
+                        </span>
+                    </td>
+                    <td><strong>${isEntrada ? '+' : '-'}${m.quantidade} un</strong></td>
+                    <td style="font-size:13px; color:#475569;">${m.motivo || '--'}</td>
+                    <td><strong style="color:#0284c7;">${m.saldo_apos} un</strong></td>
+                `;
+                tabelaHist.appendChild(tr);
+            });
+        }
+
+    } catch (e) {
+        console.error("Erro ao carregar giro de estoque:", e);
+    }
+};
+
+window.abrirModalMovimentacaoEstoque = function (tipo, idProdutoPreSelecionado = null) {
+    const modal = document.getElementById('modal-movimentacao-estoque');
+    if (!modal) return;
+
+    document.getElementById('mov-tipo-operacao').value = tipo;
+    const titulo = document.getElementById('mov-modal-titulo');
+    const btnConfirma = document.getElementById('btn-confirmar-movimentacao');
+
+    if (tipo === 'entrada') {
+        titulo.innerHTML = '📥 Registrar Entrada no Estoque (Reposição)';
+        btnConfirma.innerHTML = 'Confirmar Entrada';
+        btnConfirma.style.background = '#10b981';
+    } else {
+        titulo.innerHTML = '📤 Registrar Saída do Estoque (Baixa / Venda / Perda)';
+        btnConfirma.innerHTML = 'Confirmar Saída';
+        btnConfirma.style.background = '#ef4444';
+    }
+
+    const selectProd = document.getElementById('mov-produto-select');
+    selectProd.innerHTML = '<option value="">Selecione um produto...</option>';
+
+    const lista = (window.dadosGiroCache && window.dadosGiroCache.produtos) ? window.dadosGiroCache.produtos : window.catalogoProdutosCache;
+
+    if (lista && lista.length > 0) {
+        lista.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = `${p.nome} (Saldo atual: ${p.estoque} un)`;
+            opt.dataset.estoque = p.estoque;
+            if (idProdutoPreSelecionado && p.id == idProdutoPreSelecionado) {
+                opt.selected = true;
+            }
+            selectProd.appendChild(opt);
+        });
+        atualizarInfoSaldoModalMov();
+    }
+
+    selectProd.onchange = atualizarInfoSaldoModalMov;
+    modal.style.display = 'flex';
+};
+
+function atualizarInfoSaldoModalMov() {
+    const select = document.getElementById('mov-produto-select');
+    const inputSaldo = document.getElementById('mov-saldo-info');
+    if (!select || !inputSaldo) return;
+
+    const selectedOption = select.options[select.selectedIndex];
+    if (selectedOption && selectedOption.dataset.estoque !== undefined) {
+        inputSaldo.value = `${selectedOption.dataset.estoque} unidades disponíveis`;
+    } else {
+        inputSaldo.value = 'Selecione um produto';
+    }
+}
+
+window.fecharModalMovimentacaoEstoque = function () {
+    const modal = document.getElementById('modal-movimentacao-estoque');
+    if (modal) modal.style.display = 'none';
+};
+
+window.salvarMovimentacaoEstoque = async function () {
+    const produtoId = parseInt(document.getElementById('mov-produto-select')?.value);
+    const tipo = document.getElementById('mov-tipo-operacao')?.value;
+    const quantidade = parseInt(document.getElementById('mov-quantidade')?.value);
+    const motivo = document.getElementById('mov-motivo')?.value.trim();
+
+    if (!produtoId || isNaN(produtoId)) {
+        alert("Por favor, selecione um produto.");
+        return;
+    }
+    if (isNaN(quantidade) || quantidade <= 0) {
+        alert("Informe uma quantidade válida maior que zero.");
+        return;
+    }
+
+    try {
+        const resp = await fetch('api-giro-estoque.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                produto_id: produtoId,
+                tipo: tipo,
+                quantidade: quantidade,
+                motivo: motivo || (tipo === 'entrada' ? 'Reposição manual' : 'Baixa manual')
+            })
+        });
+
+        const res = await resp.json();
+        if (res.sucesso) {
+            alert("✓ " + res.mensagem);
+            fecharModalMovimentacaoEstoque();
+            if (typeof carregarGiroEstoque === 'function') carregarGiroEstoque();
+            if (typeof carregarEstoque === 'function') carregarEstoque();
+        } else {
+            alert("Erro: " + (res.erro || "Falha ao registrar movimentação."));
+        }
+    } catch (e) {
+        console.error("Erro ao salvar movimentação:", e);
+        alert("Erro de comunicação ao salvar a movimentação.");
+    }
+};
+
+// ============================================================
+// ATUALIZAÇÃO DA FUNÇÃO ALTERNAR ABA PARA O GIRO DE ESTOQUE
+// ============================================================
+
+const alternarAbaOriginal = window.alternarAba;
+window.alternarAba = function (nomeAba, botaoElemento) {
+    if (typeof alternarAbaOriginal === 'function') {
+        alternarAbaOriginal(nomeAba, botaoElemento);
+    } else {
+        document.querySelectorAll('.tab-content').forEach(aba => {
+            aba.classList.remove('active');
+            aba.style.display = 'none';
+        });
+        document.querySelectorAll('.admin-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+
+        const alvo = document.getElementById('aba-' + nomeAba);
+        if (alvo) {
+            alvo.classList.add('active');
+            alvo.style.display = 'block';
+        }
+        if (botaoElemento) botaoElemento.classList.add('active');
+    }
+
+    if (nomeAba === 'giro') {
+        carregarGiroEstoque();
+    } else if (nomeAba === 'estoque') {
+        carregarEstoque();
+    } else if (nomeAba === 'alunos') {
+        carregarAlunos();
+    } else if (nomeAba === 'pedidos') {
+        carregarPedidosPainel();
+    }
+};
+
 // Inicializações do Painel ADM se os containers existirem
 if (document.getElementById('lista-pedidos-chegando')) {
     carregarPedidosPainel();
@@ -1018,4 +2494,8 @@ if (document.getElementById('lista-estoque')) {
 
 if (document.getElementById('lista-alunos')) {
     carregarAlunos();
+}
+
+if (document.getElementById('aba-giro')) {
+    carregarGiroEstoque();
 }

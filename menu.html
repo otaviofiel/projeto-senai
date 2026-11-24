@@ -1,53 +1,194 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu - SENAI</title>
-    <link rel="stylesheet" href="style.css?v=3">
+    <title>Cardápio Interativo • Cantina SENAI FilaZero</title>
+    <link rel="stylesheet" href="style.css?v=6">
 </head>
-<body class="bg-light">
 
-    <div class="app-container menu-container">
-        
-        <header class="top-header">
-            <img src="senai-logo.png" alt="Logo SENAI" class="header-logo">
-        </header>
 
-        <main class="menu-content">
-            
-            <section class="top-categories">
-                <div class="promo-banner">
-                    <div class="banner-content">
-                        <h3>PAGAMENTO</h3>
-                        <p>PIX ou CARTÃO 💳</p>
-                    </div>
+<body class="menu-page-body">
+
+    <!-- CABEÇALHO DO MENU -->
+    <header class="top-header header-com-voltar">
+        <button type="button" class="btn-voltar-header" onclick="window.location.href='index.html'"
+            title="Voltar ao Início / Dashboard">
+            🏠
+        </button>
+        <img src="senai-logo.png" alt="Logo SENAI" class="header-logo senai-logo"
+            onclick="window.location.href='index.html'" style="cursor: pointer;" title="Ir para o Dashboard SENAI">
+        <button type="button" class="btn-voltar-header" onclick="window.location.href='carrinho.html'"
+            style="left: auto; right: 20px;" title="Ver Carrinho">
+            🛒 <span class="cart-badge" style="font-size: 11px; margin-left: 2px;">0</span>
+        </button>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL INTERATIVO -->
+    <main class="menu-interactive-content">
+
+        <!-- BANNER HERO INTERATIVO -->
+        <section class="menu-hero-banner">
+            <div class="menu-hero-left">
+                <h2>
+                    <span>🍽️</span> Cardápio Digital Senai
+                </h2>
+                <p>
+                    Mais de 20 opções selecionadas para você. Monte seu pedido, pague com praticidade e retire no balcão
+                    sem filas!
+                </p>
+            </div>
+            <div class="menu-hero-badges">
+                <div class="menu-hero-pill">
+                    <span class="pulse-dot"></span> Cantina Aberta
                 </div>
-
-              
-            </section>
-
-            <section class="bestsellers-section">
-                <h2 class="section-title">Mais pedidos</h2>
-                
-                <div class="products-grid" id="lista-produtos">
-                    <p style="text-align: center; width: 100%; color: #666;">Carregando cardápio...</p>
+                <div class="menu-hero-pill">
+                    💳 PIX ou Cartão
                 </div>
-            </section>
+                <div class="menu-hero-pill">
+                    ⚡ Retirada por Senha
+                </div>
+            </div>
+        </section>
 
-        </main>
+        <!-- BARRA DE PESQUISA EM TEMPO REAL -->
+        <section class="menu-search-wrapper">
+            <div class="menu-search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="input-busca-menu"
+                    placeholder="Buscar por lanche, salgado, suco, refrigerante ou sobremesa..."
+                    oninput="buscarProdutosMenu(this.value)" autocomplete="off">
+                <button type="button" class="menu-search-clear" id="btn-limpar-busca" onclick="limparBuscaMenu()"
+                    title="Limpar busca">
+                    ✕
+                </button>
+            </div>
+        </section>
 
-        <nav class="bottom-nav">
-            <button class="nav-item active">🏠</button>
-            <button class="nav-item">🔍</button>
-            <button class="nav-item cart-btn">
-                🛒 <span class="cart-badge">0</span>
+        <!-- PÍLULAS INTERATIVAS DE FILTRO POR CATEGORIA -->
+        <section class="menu-categories-bar">
+            <button type="button" class="menu-cat-pill active" data-cat="todos"
+                onclick="filtrarCategoriaMenu('todos', this)">
+                ✨ Todos <span class="menu-cat-count">20</span>
             </button>
-        </nav>
+            <button type="button" class="menu-cat-pill" data-cat="salgados"
+                onclick="filtrarCategoriaMenu('salgados', this)">
+                🥟 Salgados <span class="menu-cat-count">7</span>
+            </button>
+            <button type="button" class="menu-cat-pill" data-cat="lanches"
+                onclick="filtrarCategoriaMenu('lanches', this)">
+                🍔 Lanches & Sanduíches <span class="menu-cat-count">4</span>
+            </button>
+            <button type="button" class="menu-cat-pill" data-cat="doces" onclick="filtrarCategoriaMenu('doces', this)">
+                🍰 Sobremesas & Doces <span class="menu-cat-count">5</span>
+            </button>
+            <button type="button" class="menu-cat-pill" data-cat="bebidas"
+                onclick="filtrarCategoriaMenu('bebidas', this)">
+                🥤 Bebidas Geladas <span class="menu-cat-count">4</span>
+            </button>
+        </section>
 
+        <!-- LINHA DE CONTROLES E ORDENAÇÃO -->
+        <section class="menu-controls-row">
+            <span class="menu-counter-label" id="menu-counter-label">
+                Carregando cardápio...
+            </span>
+
+            <div class="menu-sort-group">
+                <label for="select-ordem">Ordenar por:</label>
+                <select id="select-ordem" class="menu-sort-select" onchange="ordenarProdutosMenu(this.value)">
+                    <option value="popular">🌟 Mais Populares</option>
+                    <option value="menor-preco">⬇️ Menor Preço</option>
+                    <option value="maior-preco">⬆️ Maior Preço</option>
+                    <option value="nome">🔤 Nome (A-Z)</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- GRID DE PRODUTOS INTERATIVO -->
+        <div class="menu-products-grid" id="lista-produtos">
+            <p style="text-align: center; width: 100%; color: #64748b; padding: 40px 0;">
+                Carregando cardápio FilaZero...
+            </p>
+        </div>
+
+    </main>
+
+    <!-- BARRA FLUTUANTE DE RESUMO DO CARRINHO (Aparece quando há itens) -->
+    <div class="floating-cart-bar" id="floating-cart-bar">
+        <div class="floating-cart-info">
+            <span class="floating-cart-icon">🛍️</span>
+            <div class="floating-cart-text">
+                <h5>Itens no Carrinho</h5>
+                <span id="float-cart-qty">0 itens</span>
+            </div>
+        </div>
+        <span class="floating-cart-total" id="float-cart-total">R$ 0,00</span>
+        <a href="carrinho.html" class="btn-floating-checkout">
+            VER CARRINHO ➔
+        </a>
     </div>
 
-    <script src="script.js?v=3"></script>
+    <!-- MODAL DE DETALHES E FOTO DO PRODUTO (ZOOM & ADICIONAR) -->
+    <div class="dash-modal-overlay" id="menuModalOverlay" onclick="fecharModalProdutoMenu(event)">
+        <div class="dash-modal-box" onclick="event.stopPropagation()">
+            <button type="button" class="dash-modal-close" onclick="fecharModalProdutoMenu()">✕</button>
+            <img id="menuModalImg" src="" alt="Foto do Produto" class="dash-modal-img">
+            <div class="dash-modal-content">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 6px;">
+                    <div>
+                        <span id="menuModalCat" class="menu-card-cat"
+                            style="display:block; margin-bottom: 4px;">CATEGORIA</span>
+                        <h3 id="menuModalTitle" class="dash-modal-title" style="margin: 0;">Nome do Produto</h3>
+                    </div>
+                    <span id="menuModalPrice" class="dash-modal-price">R$ 0,00</span>
+                </div>
+                <p id="menuModalDesc" class="dash-modal-desc">Descrição completa do item.</p>
+                <div class="dash-modal-meta">
+                    <span id="menuModalMeta">🌾 Informações de ingredientes</span>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <div class="menu-qty-control" style="padding: 4px 8px;">
+                        <button type="button" class="menu-qty-btn" onclick="alterarQtdModal(-1)">-</button>
+                        <span class="menu-qty-value" id="menuModalQtdVal"
+                            style="font-size: 15px; min-width: 25px;">1</span>
+                        <button type="button" class="menu-qty-btn" onclick="alterarQtdModal(1)">+</button>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="btn-dash-outline"
+                            onclick="fecharModalProdutoMenu()">Fechar</button>
+                        <button type="button" class="btn-dash-primary" onclick="adicionarDoModalAoCarrinho()">
+                            🛒 Adicionar ao Carrinho
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BARRA DE NAVEGAÇÃO INFERIOR (Estilo Kiosk & Mobile) -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="window.location.href='menu.html'" title="Cardápio">🍽️</button>
+        <button class="nav-item" onclick="window.location.href='categorias.html'" title="Categorias">🏷️</button>
+        <button class="nav-item" onclick="window.location.href='index.html'" title="Início / Dashboard">🏠</button>
+        <button class="nav-item cart-btn" onclick="window.location.href='carrinho.html'" title="Carrinho">
+            🛒 <span class="cart-badge">0</span>
+        </button>
+    </nav>
+
+    <!-- SCRIPT PRINCIPAL DO SISTEMA -->
+    <script src="script.js?v=6"></script>
+
+    <!-- SCRIPT AUXILIAR DE ESC PARA FECHAR O MODAL -->
+    <script>
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') fecharModalProdutoMenu();
+        });
+    </script>
 
 </body>
+
 </html>

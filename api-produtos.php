@@ -1,26 +1,29 @@
 <?php
-// Avisa o navegador que vamos devolver dados no formato JSON
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
+require_once 'conexao.php';
 
-// Puxa a chave do banco de dados
-include 'conexao.php';
-
-// Cria o comando para buscar todos os produtos
-$sql = "SELECT id, nome, categoria, preco, imagem FROM produtos";
-$resultado = $conn->query($sql);
-
-$produtos = array();
-
-// Se encontrar produtos, guarda tudo numa lista
-if ($resultado->num_rows > 0) {
-    while($linha = $resultado->fetch_assoc()) {
-        $produtos[] = $linha;
+if ($usarSupabase) {
+    $res = $supabase->select('produtos', 'select=id,nome,categoria,preco,imagem,estoque&order=id.asc');
+    if ($res['sucesso'] && is_array($res['dados'])) {
+        echo json_encode($res['dados']);
+        exit;
     }
 }
 
-// Imprime a lista na tela no formato JSON
-echo json_encode($produtos);
+// Fallback MySQL local
+if ($conn && !$conn->connect_error) {
+    $sql = "SELECT id, nome, categoria, preco, imagem, estoque FROM produtos ORDER BY id ASC";
+    $resultado = $conn->query($sql);
+    $produtos = [];
+    if ($resultado && $resultado->num_rows > 0) {
+        while ($linha = $resultado->fetch_assoc()) {
+            $produtos[] = $linha;
+        }
+    }
+    echo json_encode($produtos);
+    $conn->close();
+    exit;
+}
 
-// Fecha a conexão
-$conn->close();
+echo json_encode([]);
 ?>

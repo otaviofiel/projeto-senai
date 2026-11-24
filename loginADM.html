@@ -1,97 +1,160 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Acesso Restrito - SENAI</title>
-
-    <link rel="stylesheet" href="style.css?v=3">
+    <title>Acesso Administrativo • Cantina SENAI FilaZero</title>
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 
-<body>
+<body class="cadastro-body-modern login-adm-body">
 
-    <div class="app-container">
+    <!-- CONTAINER PRINCIPAL DO LOGIN ADMINISTRATIVO -->
+    <div class="cadastro-wrapper login-adm-wrapper">
 
-        <main class="screen login-screen">
+        <!-- CARD PRINCIPAL COM DESIGN EM 2 COLUNAS -->
+        <div class="cadastro-card-grid login-adm-card">
 
-            <!-- PARTE SUPERIOR -->
-            <div class="top-section">
+            <!-- COLUNA ESQUERDA: HERO VISUAL ADMINISTRATIVO (DARK & RED) -->
+            <div class="cadastro-hero-side login-adm-hero">
+                <div class="cadastro-hero-header">
+                    <img src="senai-logo.png" alt="Logo SENAI" class="cadastro-hero-logo"
+                        onclick="window.location.href='index.html'" style="cursor: pointer;" title="Ir para o Início">
+                    <span class="cadastro-pill-tag admin-pill-tag">🛡️ Acesso Restrito • Gestão</span>
+                </div>
 
-                <img
-                    src="senai-logo.png"
-                    alt="Logo SENAI"
-                    class="senai-logo"
-                >
+                <div class="cadastro-hero-content">
+                    <h2>Portal de Controle e Gestão da Cantina</h2>
+                    <p>
+                        Acesse a central administrativa para controlar pedidos em tempo real, gerenciar o estoque, movimentações financeiras e contas de alunos.
+                    </p>
 
-                <p>
-                    Acesso restrito a funcionários.
-                </p>
+                    <!-- Lista de Vantagens e Módulos do ADM -->
+                    <div class="cadastro-benefits-list">
+                        <div class="benefit-item">
+                            <span class="benefit-icon">📋</span>
+                            <div>
+                                <strong>Fila de Pedidos ao Vivo</strong>
+                                <small>Controle de preparo e chamada de senhas</small>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">📦</span>
+                            <div>
+                                <strong>Controle de Estoque & Giro</strong>
+                                <small>Entradas, saídas e alerta de produtos em baixa</small>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">👥</span>
+                            <div>
+                                <strong>Gestão de Alunos</strong>
+                                <small>Aprovação de cadastros, cargos e moderação</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="cadastro-hero-footer">
+                    <span>Área Protegida • Cantina SENAI FilaZero 2026</span>
+                </div>
             </div>
 
+            <!-- COLUNA DIREITA: FORMULÁRIO INTERATIVO DE LOGIN ADM -->
+            <div class="cadastro-form-side">
 
-            <!-- PARTE INFERIOR -->
-            <div class="bottom-section">
+                <!-- NAVEGAÇÃO SUPERIOR RÁPIDA -->
+                <div class="cadastro-top-nav">
+                    <button type="button" class="btn-nav-round" onclick="window.location.href='index.html'" title="Início">
+                        🏠 Início
+                    </button>
+                    <button type="button" class="btn-nav-round" onclick="window.location.href='menu.html'" title="Cardápio">
+                        🍽️ Cardápio
+                    </button>
+                </div>
 
-                <div class="admin-form">
+                <div class="cadastro-form-header">
+                    <div class="adm-badge-shield">🔐 Identificação de Administrador</div>
+                    <h3 style="margin-top: 8px;">Entrar no Painel ADM</h3>
+                    <p>Informe seu usuário/e-mail e sua senha de acesso:</p>
+                </div>
 
-                    <!-- USUÁRIO -->
-                    <input
-                        type="text"
-                        id="adm-user"
-                        placeholder="Usuário"
-                        autocomplete="username"
-                    >
+                <!-- FORMULÁRIO DE LOGIN ADM -->
+                <form id="form-login-adm" onsubmit="event.preventDefault(); executarLoginAdm();" class="modern-interactive-form">
 
+                    <!-- USUÁRIO OU E-MAIL -->
+                    <div class="form-floating-group">
+                        <label for="adm-user">
+                            <span class="field-icon">👤</span> Usuário ou E-mail:
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="text" id="adm-user" placeholder="admin@filazero.com ou Administrador"
+                                autocomplete="username" required autofocus>
+                        </div>
+                    </div>
 
                     <!-- SENHA -->
-                    <input
-                        type="password"
-                        id="adm-pass"
-                        placeholder="Senha"
-                        autocomplete="current-password"
-                    >
+                    <div class="form-floating-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label for="adm-pass" style="margin-bottom: 0;">
+                                <span class="field-icon">🔑</span> Senha de Acesso:
+                            </label>
+                            <span class="toggle-password-btn" onclick="alternarVisibilidadeSenhaAdm()" id="toggle-pass-label">
+                                👁️ Mostrar
+                            </span>
+                        </div>
+                        <div class="input-wrapper">
+                            <input type="password" id="adm-pass" placeholder="Digite sua senha"
+                                autocomplete="current-password" required>
+                        </div>
+                        <small class="field-helper">
+                            🔒 Conexão segura protegida por criptografia de sessão.
+                        </small>
+                    </div>
 
+                    <!-- FEEDBACK / ALERTA DE ERRO DINÂMICO -->
+                    <div id="adm-feedback-msg" class="cadastro-feedback-box" style="display: none;"></div>
 
-                    <!-- ENTRAR -->
-                    <button
-                        type="button"
-                        class="btn-entrar-adm"
-                        id="btn-login-adm"
-                    >
-                        ENTRAR
+                    <!-- BOTÃO ENTRAR NO PAINEL -->
+                    <button type="button" class="btn-submit-cadastro btn-adm-submit" id="btn-login-adm">
+                        <span>🛡️ ENTRAR NO PAINEL ADMINISTRATIVO</span>
                     </button>
 
-                </div>
+                    <!-- RODAPÉ INFORMATIVO -->
+                    <div class="cadastro-login-footer">
+                        Não é funcionário? 
+                        <a href="index.html" class="link-destaque-login">Ir para o Início / Cardápio</a>
+                    </div>
 
-
-                <!-- VOLTAR -->
-                <div class="footer-btn">
-
-                    <button
-                        type="button"
-                        class="btn-voltar"
-                        onclick="window.location.href='index.html'"
-                    >
-                        VOLTAR PARA ALUNOS
-                    </button>
-
-                </div>
+                </form>
 
             </div>
 
-        </main>
+        </div>
 
     </div>
 
+    <!-- SCRIPT PRINCIPAL DO SISTEMA -->
+    <script src="script.js?v=9"></script>
 
-    <!-- SCRIPT PRINCIPAL -->
-    <script src="script.js?v=3"></script>
+    <!-- INTERATIVIDADE DO FORMULÁRIO -->
+    <script>
+        function alternarVisibilidadeSenhaAdm() {
+            const inputPass = document.getElementById('adm-pass');
+            const toggleLabel = document.getElementById('toggle-pass-label');
+            if (!inputPass) return;
+
+            if (inputPass.type === 'password') {
+                inputPass.type = 'text';
+                if (toggleLabel) toggleLabel.innerHTML = '🙈 Ocultar';
+            } else {
+                inputPass.type = 'password';
+                if (toggleLabel) toggleLabel.innerHTML = '👁️ Mostrar';
+            }
+        }
+    </script>
 
 </body>
 
 </html>
-

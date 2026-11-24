@@ -1,88 +1,298 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrinho - SENAI</title>
-    <link rel="stylesheet" href="style.css?v=3">
+    <title>Carrinho de Compras • Cantina SENAI FilaZero</title>
+    <link rel="stylesheet" href="style.css?v=6">
 </head>
-<body class="bg-light">
 
-    <div class="app-container menu-container">
-        
-        <header class="top-header header-com-voltar">
-            <button type="button" class="btn-voltar-header" onclick="window.location.href='categorias.html'" title="Voltar para Categorias">
-                &#8592;
-            </button>
-            <img src="senai-logo.png" alt="Logo SENAI" class="header-logo">
-        </header>
+<body class="cart-page-body">
 
-        <main class="menu-content cart-content">
-            
-            <div class="cart-top-bar">
-                <button type="button" class="btn-voltar-categorias" onclick="window.location.href='categorias.html'">
-                    &larr; Voltar para Categorias
-                </button>
-            </div>
+    <!-- CABEÇALHO DO CARRINHO -->
+    <header class="top-header header-com-voltar">
+        <button type="button" class="btn-voltar-header" onclick="window.location.href='menu.html'"
+            title="Voltar ao Cardápio">
+            🍽️
+        </button>
+        <img src="senai-logo.png" alt="Logo SENAI" class="header-logo senai-logo"
+            onclick="window.location.href='index.html'" style="cursor: pointer;" title="Ir para o Dashboard SENAI">
+        <button type="button" class="btn-voltar-header" onclick="window.location.href='index.html'"
+            style="left: auto; right: 20px;" title="Ir para o Início / Dashboard">
+            🏠
+        </button>
+    </header>
 
-            <h2 class="cart-title">Carrinho</h2>
-            
-            <div class="cart-items-box">
-                <p style="padding:20px; color:#666; width:100%; text-align:center;">
-                    Carregando itens...
+    <!-- CONTEÚDO PRINCIPAL DO CARRINHO -->
+    <main class="cart-container-interactive">
+
+        <!-- BANNER HERO SUPERIOR -->
+        <section class="cart-hero-banner">
+            <div>
+                <h2>
+                    <span>🛒</span> Meu Carrinho de Compras
+                </h2>
+                <p>
+                    Confira seus lanches, escolha o método de pagamento e retire no balcão com senha digital sem filas!
                 </p>
             </div>
+            <div class="cart-hero-steps">
+                <span>1. Escolha</span> &rarr; <strong style="color: #ffffff;">2. Pagamento</strong> &rarr; <span>3.
+                    Senha</span>
+            </div>
+        </section>
 
-            <div class="cart-summary">
-                <h3>Resumo</h3>
-                <div class="summary-line">
-                    <span>Subtotal:</span>
-                    <span>R$ 0,00</span>
-                </div>
-                <div class="summary-line total-line">
-                    <span>Total do Pedido:</span>
-                    <span>R$ 0,00</span>
+        <!-- ESTADO QUANDO O CARRINHO ESTÁ VAZIO (Exibido dinamicamente via JS) -->
+        <section class="cart-panel-card cart-empty-box" id="carrinho-vazio-box" style="display: none;">
+            <span class="cart-empty-icon">🛍️</span>
+            <h3>Seu carrinho está vazio!</h3>
+            <p>
+                Você ainda não adicionou nenhum salgado, lanche ou bebida. Que tal dar uma olhada nas opções do nosso
+                cardápio escolar?
+            </p>
+            <a href="menu.html" class="btn-dash-primary" style="display: inline-flex;">
+                🍽️ Explorar Cardápio da Cantina
+            </a>
+        </section>
+
+        <!-- GRID PRINCIPAL DE 2 COLUNAS DO CARRINHO -->
+        <div class="cart-layout-grid" id="cart-layout-grid">
+
+            <!-- COLUNA ESQUERDA: LISTA DE ITENS DO PEDIDO -->
+            <div class="cart-items-column">
+                <div class="cart-panel-card">
+                    <div class="cart-panel-header">
+                        <h3>
+                            <span>🥪</span> Itens do Pedido (<span id="cart-items-count-header">0 itens</span>)
+                        </h3>
+                        <button type="button" class="btn-limpar-carrinho" onclick="limparCarrinhoCompleto()">
+                            🗑️ Limpar tudo
+                        </button>
+                    </div>
+
+                    <!-- Container onde os itens do carrinho são inseridos -->
+                    <div class="cart-items-list" id="lista-itens-carrinho">
+                        <p style="text-align: center; color: #64748b; padding: 20px 0;">
+                            Carregando itens do carrinho...
+                        </p>
+                    </div>
+
+                    <div
+                        style="margin-top: 25px; padding-top: 18px; border-top: 1px dashed #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <a href="menu.html" class="btn-dash-outline" style="text-decoration: none;">
+                            + Adicionar Mais Itens
+                        </a>
+                        <span style="font-size: 13px; color: #64748b;">
+                            ⚡ Retirada imediata no balcão da cantina
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            <div class="payment-methods">
-                <h3>Métodos de Pagamento</h3>
-                
-                <div class="payment-option">
-                    <div class="payment-header">
-                        <span class="icon">💳</span>
-                        <strong>Cartão de Crédito/Débito</strong>
+            <!-- COLUNA DIREITA: RESUMO E FORMA DE PAGAMENTO -->
+            <div class="cart-checkout-column">
+
+                <!-- 1. RESUMO DE VALORES -->
+                <div class="cart-panel-card">
+                    <div class="cart-panel-header" style="margin-bottom: 14px; padding-bottom: 12px;">
+                        <h3><span>🧾</span> Resumo do Pedido</h3>
                     </div>
-                    <div class="fake-form">
-                        <input type="text" placeholder="Nome no Cartão" disabled>
-                        <input type="text" placeholder="Número do Cartão" disabled>
-                        <div class="form-row">
-                            <input type="text" placeholder="Validade" disabled>
-                            <input type="text" placeholder="CVV" disabled>
+
+                    <div class="cart-summary-line">
+                        <span>Subtotal dos produtos:</span>
+                        <strong id="cart-subtotal-val">R$ 0,00</strong>
+                    </div>
+
+                    <div class="cart-summary-line">
+                        <span>Taxa de autoatendimento:</span>
+                        <span style="color: #10b981; font-weight: 700;">Grátis (R$ 0,00)</span>
+                    </div>
+
+                    <div class="cart-summary-line total">
+                        <span>Total do Pedido:</span>
+                        <span class="total-amount" id="cart-total-val">R$ 0,00</span>
+                    </div>
+
+                    <div
+                        style="background: #f8fafc; border-radius: 12px; padding: 12px 14px; margin-top: 16px; font-size: 13px; color: #64748b; border-left: 4px solid var(--cor-primaria);">
+                        ⏱️ <strong>Preparo Inteligente:</strong> Ao confirmar, seu pedido entra na fila de separação da
+                        cantina e fica pronto para a hora do seu recreio!
+                    </div>
+                </div>
+
+                <!-- 2. FORMA DE PAGAMENTO -->
+                <div class="cart-panel-card">
+                    <div class="cart-panel-header" style="margin-bottom: 14px; padding-bottom: 12px;">
+                        <h3><span>💳</span> Método de Pagamento</h3>
+                    </div>
+
+                    <!-- Abas de Pagamento -->
+                    <div class="payment-tabs-nav">
+                        <button type="button" class="payment-tab-btn active"
+                            onclick="selecionarMetodoPagamento('pix', this)">
+                            <span style="font-size: 18px;">💠</span>
+                            <span>PIX</span>
+                        </button>
+                        <button type="button" class="payment-tab-btn"
+                            onclick="selecionarMetodoPagamento('cartao', this)">
+                            <span style="font-size: 18px;">💳</span>
+                            <span>Cartão</span>
+                        </button>
+                        <button type="button" class="payment-tab-btn"
+                            onclick="selecionarMetodoPagamento('dinheiro', this)">
+                            <span style="font-size: 18px;">💵</span>
+                            <span>Dinheiro</span>
+                        </button>
+                    </div>
+
+                    <!-- Painel 1: PIX Instantâneo (Simulação Fictícia com QR Code) -->
+                    <div class="payment-tab-panel active" id="panel-pagamento-pix">
+                        <div class="pix-display-box">
+                            <span style="display: inline-block; background: #e0f2fe; color: #0284c7; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 12px;">
+                                💠 Pagamento Instantâneo via PIX
+                            </span>
+                            <img id="pix-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=00020126580014br.gov.bcb.pix0136cantina-senai@filazero.com5204000053039865802BR5920CANTINA+SENAI+FILAZERO6008OURINHOS62070503***6304E2B1"
+                                alt="QR Code PIX Cantina SENAI" class="pix-qr-img">
+                            <p style="font-size: 13px; color: #475569; margin-bottom: 10px;">
+                                Escaneie com a câmera do seu celular ou copie o código Pix abaixo:
+                            </p>
+                            <div class="pix-code-snippet" id="pix-code-text">00020126580014br.gov.bcb.pix0136cantina-senai@filazero.com5204000053039865802BR5920CANTINA SENAI FILAZERO6008OURINHOS62070503***6304E2B1</div>
+                            <button type="button" class="btn-copiar-pix" onclick="copiarCodigoPix(this)">
+                                📋 Copiar Código PIX
+                            </button>
+                            <p style="font-size: 12px; color: #64748b; margin-top: 12px;">
+                                💡 Após copiar ou escanear, clique em <strong>Confirmar Pagamento PIX</strong> para gerar sua senha de retirada.
+                            </p>
                         </div>
                     </div>
+
+                    <!-- Painel 2: Formulário de Cartão (Fictício / Simulação Completa) -->
+                    <div class="payment-tab-panel" id="panel-pagamento-cartao">
+                        <div class="payment-info-box" style="padding: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <strong style="color: #1e293b; font-size: 14px;">💳 Dados do Cartão (Crédito ou Débito)</strong>
+                                <div style="display: flex; gap: 6px;">
+                                    <span style="background: #e2e8f0; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold;">Visa</span>
+                                    <span style="background: #e2e8f0; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold;">Master</span>
+                                    <span style="background: #e2e8f0; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold;">Elo</span>
+                                </div>
+                            </div>
+
+                            <!-- Tipo de Cartão -->
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 4px;">Tipo de Transação:</label>
+                                <div style="display: flex; gap: 15px;">
+                                    <label style="font-size: 13px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                        <input type="radio" name="tipo_cartao" value="credito" checked> Crédito
+                                    </label>
+                                    <label style="font-size: 13px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                        <input type="radio" name="tipo_cartao" value="debito"> Débito
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Número do Cartão -->
+                            <div style="margin-bottom: 12px;">
+                                <label for="cartao-numero" style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 4px;">Número do Cartão:</label>
+                                <input type="text" id="cartao-numero" placeholder="0000 0000 0000 0000" maxlength="19"
+                                    oninput="mascaraNumeroCartao(this)"
+                                    style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; letter-spacing: 1px;">
+                            </div>
+
+                            <!-- Nome Impresso -->
+                            <div style="margin-bottom: 12px;">
+                                <label for="cartao-nome" style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 4px;">Nome Impresso no Cartão:</label>
+                                <input type="text" id="cartao-nome" placeholder="Ex: JOAO SILVA" uppercase
+                                    style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; text-transform: uppercase;">
+                            </div>
+
+                            <!-- Validade e CVV -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                <div>
+                                    <label for="cartao-validade" style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 4px;">Validade (MM/AA):</label>
+                                    <input type="text" id="cartao-validade" placeholder="MM/AA" maxlength="5"
+                                        oninput="mascaraValidadeCartao(this)"
+                                        style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; text-align: center;">
+                                </div>
+                                <div>
+                                    <label for="cartao-cvv" style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 4px;">CVV:</label>
+                                    <input type="text" id="cartao-cvv" placeholder="123" maxlength="4"
+                                        oninput="this.value = this.value.replace(/\D/g, '')"
+                                        style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; text-align: center;">
+                                </div>
+                            </div>
+
+                            <!-- Parcelas (se crédito) -->
+                            <div id="cartao-parcelas-box" style="margin-bottom: 6px;">
+                                <label for="cartao-parcelas" style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 4px;">Opção de Parcelamento:</label>
+                                <select id="cartao-parcelas" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; background: #fff;">
+                                    <option value="1">1x à vista (sem juros)</option>
+                                    <option value="2">2x sem juros</option>
+                                    <option value="3">3x sem juros</option>
+                                </select>
+                            </div>
+
+                            <span style="font-size: 11px; color: #10b981; display: inline-flex; align-items: center; gap: 4px; margin-top: 8px;">
+                                🔒 Ambiente de pagamento 100% simulado para fins de teste.
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Painel 3: Dinheiro no Balcão -->
+                    <div class="payment-tab-panel" id="panel-pagamento-dinheiro">
+                        <div class="payment-info-box">
+                            <strong>💵 Pagamento em Espécie:</strong>
+                            O pagamento em dinheiro pode ser efetuado diretamente no caixa exclusivo rápido da cantina ao chamar sua senha.
+                            <div style="margin-top: 12px;">
+                                <label
+                                    style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 5px;">
+                                    Precisa de troco para quanto? (Opcional):
+                                </label>
+                                <input type="text" id="troco-para-input" placeholder="Ex: R$ 50,00"
+                                    style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; font-size: 14px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botão de Confirmação do Pedido -->
+                    <div style="margin-top: 25px;">
+                        <button type="button" class="btn-checkout-primary" id="btn-finalizar-pedido"
+                            onclick="finalizarPedidoCheckout()">
+                            💠 CONFIRMAR PAGAMENTO PIX
+                        </button>
+                    </div>
+
                 </div>
 
-                <hr class="payment-divider">
-
-                <div class="payment-option">
-                    <div class="payment-header">
-                        <span class="icon">💠</span>
-                        <strong>PIX</strong>
-                    </div>
-                    <div class="pix-area">
-                        <img src="https://api.qrcode-monkey.com/tmp/525a7ba02e726e60e0b69144e060401e.svg?1790621052759" alt="QR Code PIX" width="100px">
-                        <p class="pix-code">Código PIX: 00020126580014br.gov.bcb.pix...</p>
-                    </div>
-                </div>
             </div>
 
-        </main>
+        </div>
 
-        <button type="button" class="btn-prosseguir" id="btn-finalizar">PROSSEGUIR</button>
+    </main>
 
-    </div>
+    <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+    <nav class="bottom-nav">
+        <button class="nav-item" onclick="window.location.href='menu.html'" title="Cardápio">🍽️</button>
+        <button class="nav-item" onclick="window.location.href='categorias.html'" title="Categorias">🏷️</button>
+        <button class="nav-item" onclick="window.location.href='index.html'" title="Início / Dashboard">🏠</button>
+        <button class="nav-item cart-btn active" onclick="window.location.href='carrinho.html'" title="Carrinho">
+            🛒 <span class="cart-badge">0</span>
+        </button>
+    </nav>
 
-    <script src="script.js?v=3"></script>
+    <!-- SCRIPT PRINCIPAL DO SISTEMA -->
+    <script src="script.js?v=6"></script>
+
+    <!-- INICIALIZAÇÃO IMEDIATA DA TELA DO CARRINHO -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof window.renderizarPaginaCarrinho === 'function') {
+                window.renderizarPaginaCarrinho();
+            }
+        });
+    </script>
+
 </body>
+
 </html>
